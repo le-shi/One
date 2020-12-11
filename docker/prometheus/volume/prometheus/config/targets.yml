@@ -1,0 +1,15 @@
+  # prometheus-server
+- targets: ['mysqlexporter:9104']
+  labels: {type: mysqld, hostname: prometheus}
+- targets: ['node-prom:9100']
+  labels: {type: node, hostname: prometheus}
+- targets: ['alertmanager:9093']
+  labels: {type: alertmanager, hostname: prometheus}
+- targets: ['redis_exporter:9121']
+  labels: {type: redis, hostname: prometheus}
+- targets: ['openstack-exporter:9180']
+  labels: {type: openstack, hostname: prometheus}
+- targets: ['ceph_ip:9283']
+  labels: {type: ceph, hostname: prometheus}
+- targets: ['rabbitmq_ip:15692']
+  labels: {type: rabbitmq, hostname: prometheus}

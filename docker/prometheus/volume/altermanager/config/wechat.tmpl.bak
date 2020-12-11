@@ -1,0 +1,10 @@
+{{ define "wechat.default.message" }}
+{{ range .Alerts }}
+= start = {{ .Labels.env }}
+Time: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+Summary: {{ .Annotations.summary }}
+Host: {{ .Labels.instance }}
+Description: {{ .Annotations.description }}
+= end =
+{{ end }}
+{{ end }}

@@ -1,0 +1,1059 @@
+# https://awesome-prometheus-alerts.grep.to/rules
+groups:
+# prometheus
+- name: Prometheus self-monitoring
+  rules:
+  - alert: PrometheusJobMissing
+    expr: absent(up{job="prometheus"})
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus job missing (instance {{ $labels.hostname }})"
+      description: "A Prometheus job has disappeared\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTargetMissing
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus target missing (instance {{ $labels.hostname }})"
+      description: "A Prometheus target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusAllTargetsMissing
+    expr: count by (job) (up) == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus all targets missing (instance {{ $labels.hostname }})"
+      description: "A Prometheus job does not have living target anymore.\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusConfigurationReloadFailure
+    expr: prometheus_config_last_reload_successful != 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus configuration reload failure (instance {{ $labels.hostname }})"
+      description: "Prometheus configuration reload error\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTooManyRestarts
+    expr: changes(process_start_time_seconds{job=~"prometheus|pushgateway|alertmanager"}[15m]) > 2
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus too many restarts (instance {{ $labels.hostname }})"
+      description: "Prometheus has restarted more than twice in the last 15 minutes. It might be crashlooping.\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusAlertmanagerConfigurationReloadFailure
+    expr: alertmanager_config_last_reload_successful != 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus AlertManager configuration reload failure (instance {{ $labels.hostname }})"
+      description: "AlertManager configuration reload error\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusAlertmanagerConfigNotSynced
+    expr: count(count_values("config_hash", alertmanager_config_hash)) > 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus AlertManager config not synced (instance {{ $labels.hostname }})"
+      description: "Configurations of AlertManager cluster instances are out of sync\n  VALUE = {{ $value }}"
+
+  # - alert: PrometheusAlertmanagerE2eDeadManSwitch
+  #   expr: vector(1)
+  #   for: 5m
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "Prometheus AlertManager E2E dead man switch (instance {{ $labels.hostname }})"
+  #     description: "Prometheus DeadManSwitch is an always-firing alert. It's used as an end-to-end test of Prometheus through the Alertmanager.\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusNotConnectedToAlertmanager
+    expr: prometheus_notifications_alertmanagers_discovered < 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus not connected to alertmanager (instance {{ $labels.hostname }})"
+      description: "Prometheus cannot connect the alertmanager\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusRuleEvaluationFailures
+    expr: increase(prometheus_rule_evaluation_failures_total[3m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus rule evaluation failures (instance {{ $labels.hostname }})"
+      description: "Prometheus encountered {{ $value }} rule evaluation failures, leading to potentially ignored alerts.\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTemplateTextExpansionFailures
+    expr: increase(prometheus_template_text_expansion_failures_total[3m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus template text expansion failures (instance {{ $labels.hostname }})"
+      description: "Prometheus encountered {{ $value }} template text expansion failures\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusRuleEvaluationSlow
+    expr: prometheus_rule_group_last_duration_seconds > prometheus_rule_group_interval_seconds
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus rule evaluation slow (instance {{ $labels.hostname }})"
+      description: "Prometheus rule evaluation took more time than the scheduled interval. I indicates a slower storage backend access or too complex query.\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusNotificationsBacklog
+    expr: min_over_time(prometheus_notifications_queue_length[10m]) > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus notifications backlog (instance {{ $labels.hostname }})"
+      description: "The Prometheus notification queue has not been empty for 10 minutes\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusAlertmanagerNotificationFailing
+    expr: rate(alertmanager_notifications_failed_total[1m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus AlertManager notification failing (instance {{ $labels.integration }})"
+      description: "Alertmanager is failing sending notifications\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTargetEmpty
+    expr: prometheus_sd_discovered_targets == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus target empty (instance {{ $labels.hostname }})"
+      description: "Prometheus has no target in service discovery\n  VALUE = {{ $value }}"
+
+  # - alert: PrometheusTargetScrapingSlow
+  #   expr: prometheus_target_interval_length_seconds{quantile="0.9"} > 60
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "Prometheus target scraping slow (instance {{ $labels.hostname }})"
+  #     description: "Prometheus is scraping exporters slowly\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusLargeScrape
+    expr: increase(prometheus_target_scrapes_exceeded_sample_limit_total[10m]) > 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus large scrape (instance {{ $labels.hostname }})"
+      description: "Prometheus has many scrapes that exceed the sample limit\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTargetScrapeDuplicate
+    expr: increase(prometheus_target_scrapes_sample_duplicate_timestamp_total[5m]) > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus target scrape duplicate (instance {{ $labels.hostname }})"
+      description: "Prometheus has many samples rejected due to duplicate timestamps but different values\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTsdbCheckpointCreationFailures
+    expr: increase(prometheus_tsdb_checkpoint_creations_failed_total[3m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus TSDB checkpoint creation failures (instance {{ $labels.hostname }})"
+      description: "Prometheus encountered {{ $value }} checkpoint creation failures\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTsdbCheckpointDeletionFailures
+    expr: increase(prometheus_tsdb_checkpoint_deletions_failed_total[3m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus TSDB checkpoint deletion failures (instance {{ $labels.hostname }})"
+      description: "Prometheus encountered {{ $value }} checkpoint deletion failures\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTsdbCompactionsFailed
+    expr: increase(prometheus_tsdb_compactions_failed_total[3m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus TSDB compactions failed (instance {{ $labels.hostname }})"
+      description: "Prometheus encountered {{ $value }} TSDB compactions failures\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTsdbHeadTruncationsFailed
+    expr: increase(prometheus_tsdb_head_truncations_failed_total[3m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus TSDB head truncations failed (instance {{ $labels.hostname }})"
+      description: "Prometheus encountered {{ $value }} TSDB head truncation failures\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTsdbReloadFailures
+    expr: increase(prometheus_tsdb_reloads_failures_total[3m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus TSDB reload failures (instance {{ $labels.hostname }})"
+      description: "Prometheus encountered {{ $value }} TSDB reload failures\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTsdbWalCorruptions
+    expr: increase(prometheus_tsdb_wal_corruptions_total[3m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus TSDB WAL corruptions (instance {{ $labels.hostname }})"
+      description: "Prometheus encountered {{ $value }} TSDB WAL corruptions\n  VALUE = {{ $value }}"
+
+  - alert: PrometheusTsdbWalTruncationsFailed
+    expr: increase(prometheus_tsdb_wal_truncations_failed_total[3m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus TSDB WAL truncations failed (instance {{ $labels.hostname }})"
+      description: "Prometheus encountered {{ $value }} TSDB WAL truncation failures\n  VALUE = {{ $value }}"
+
+# node-expporter
+- name: Host and hardware
+  rules:
+  - alert: HostOutOfMemory
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host out of memory (instance {{ $labels.hostname }})"
+      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}"
+
+  - alert: HostMemoryUnderMemoryPressure
+    expr: rate(node_vmstat_pgmajfault[1m]) > 1000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host memory under memory pressure (instance {{ $labels.hostname }})"
+      description: "The node is under heavy memory pressure. High rate of major page faults\n  VALUE = {{ $value }}"
+
+  - alert: HostUnusualNetworkThroughputIn
+    expr: sum by (instance,hostname) (rate(node_network_receive_bytes_total[2m])) / 1024 / 1024 > 100
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host unusual network throughput in (instance {{ $labels.hostname }})"
+      description: "Host network interfaces are probably receiving too much data (> 100 MB/s)\n  VALUE = {{ $value }}"
+
+  - alert: HostUnusualNetworkThroughputOut
+    expr: sum by (instance,hostname) (rate(node_network_transmit_bytes_total[2m])) / 1024 / 1024 > 100
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host unusual network throughput out (instance {{ $labels.hostname }})"
+      description: "Host network interfaces are probably sending too much data (> 100 MB/s)\n  VALUE = {{ $value }}"
+
+  - alert: HostUnusualDiskReadRate
+    expr: sum by (instance,hostname,device) (rate(node_disk_read_bytes_total[2m])) / 1024 / 1024 > 50
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host unusual disk read rate (instance {{ $labels.hostname }})"
+      description: "Disk is probably reading too much data (> 50 MB/s)\n  DEVICE = {{ $labels.device }}\n  VALUE = {{ $value }}"
+
+  - alert: HostUnusualDiskWriteRate
+    expr: sum by (instance,hostname) (rate(node_disk_written_bytes_total[2m])) / 1024 / 1024 > 50
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host unusual disk write rate (instance {{ $labels.hostname }})"
+      description: "Disk is probably writing too much data (> 50 MB/s)\n  VALUE = {{ $value }}"
+
+  # please add ignored mountpoints in node_exporter parameters like
+  # "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|run)($|/)"
+  - alert: HostOutOfDiskSpace
+    expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host out of disk space (instance {{ $labels.hostname }})"
+      description: "Disk is almost full (< 10% left)\n  POINT= = {{ $labels.mountpoint }}\n  VALUE = {{ $value }}"
+
+  - alert: HostDiskWillFillIn4Hours
+    expr: predict_linear(node_filesystem_free_bytes{fstype!~"tmpfs"}[1h], 4 * 3600) < 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host disk will fill in 4 hours (instance {{ $labels.hostname }})"
+      description: "Disk will fill in 4 hours at current write rate\n  VALUE = {{ $value }}"
+
+  - alert: HostOutOfInodes
+    expr: node_filesystem_files_free{mountpoint ="/"} / node_filesystem_files{mountpoint ="/"} * 100 < 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host out of inodes (instance {{ $labels.hostname }})"
+      description: "Disk is almost running out of available inodes (< 10% left)\n  VALUE = {{ $value }}"
+
+  # - alert: HostUnusualDiskReadLatency
+  #   expr: rate(node_disk_read_time_seconds_total[1m]) / rate(node_disk_reads_completed_total[1m]) > 0.1 and rate(node_disk_reads_completed_total[1m]) > 0
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "Host unusual disk read latency (instance {{ $labels.hostname }})"
+  #     description: "Disk latency is growing (read operations > 100ms)\n  VALUE = {{ $value }}"
+
+  - alert: HostUnusualDiskWriteLatency
+    expr: rate(node_disk_write_time_seconds_total[1m]) / rate(node_disk_writes_completed_total[1m]) > 0.1 and rate(node_disk_writes_completed_total[1m]) > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host unusual disk write latency (instance {{ $labels.hostname }})"
+      description: "Disk latency is growing (write operations > 100ms)\n  VALUE = {{ $value }}"
+
+  - alert: HostHighCpuLoad
+    expr: 100 - (avg by(instance,hostname) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host high CPU load (instance {{ $labels.hostname }})"
+      description: "CPU load is > 80%\n  VALUE = {{ $value }}"
+
+  # 1000 context switches is an arbitrary number.
+  # Alert threshold depends on nature of application.
+  # Please read: https://github.com/samber/awesome-prometheus-alerts/issues/58
+  # - alert: HostContextSwitching
+  #   expr: (rate(node_context_switches_total[5m])) / (count without(cpu, mode) (node_cpu_seconds_total{mode="idle"})) > 1000
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "Host context switching (instance {{ $labels.hostname }})"
+  #     description: "Context switching is growing on node (> 1000 / s)\n  VALUE = {{ $value }}"
+
+  # - alert: HostSwapIsFillingUp
+  #   expr: (1 - (node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes)) * 100 > 80
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "Host swap is filling up (instance {{ $labels.hostname }})"
+  #     description: "Swap is filling up (>80%)\n  VALUE = {{ $value }}"
+
+  - alert: HostSystemdServiceCrashed
+    expr: node_systemd_unit_state{state="failed"} == 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host SystemD service crashed (instance {{ $labels.hostname }})"
+      description: "SystemD service crashed\n  VALUE = {{ $value }}"
+
+  - alert: HostPhysicalComponentTooHot
+    expr: node_hwmon_temp_celsius > 75
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host physical component too hot (instance {{ $labels.hostname }})"
+      description: "Physical hardware component too hot\n  VALUE = {{ $value }}"
+
+  - alert: HostNodeOvertemperatureAlarm
+    expr: node_hwmon_temp_alarm == 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Host node overtemperature alarm (instance {{ $labels.hostname }})"
+      description: "Physical node temperature alarm triggered\n  VALUE = {{ $value }}"
+
+  - alert: HostRaidArrayGotInactive
+    expr: node_md_state{state="inactive"} > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Host RAID array got inactive (instance {{ $labels.hostname }})"
+      description: "RAID array {{ $labels.device }} is in degraded state due to one or more disks failures. Number of spare drives is insufficient to fix issue automatically.\n  VALUE = {{ $value }}"
+
+  - alert: HostRaidDiskFailure
+    expr: node_md_disks{state="failed"} > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host RAID disk failure (instance {{ $labels.hostname }})"
+      description: "At least one device in RAID array on {{ $labels.hostname }} failed. Array {{ $labels.md_device }} needs attention and possibly a disk swap\n  VALUE = {{ $value }}"
+
+  # - alert: HostKernelVersionDeviations
+  #   expr: count(sum(label_replace(node_uname_info, "kernel", "$1", "release", "([0-9]+.[0-9]+.[0-9]+).*")) by (kernel)) > 1
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "Host kernel version deviations (instance {{ $labels.hostname }})"
+  #     description: "Different kernel versions are running\n  VALUE = {{ $value }}"
+
+  - alert: HostOomKillDetected
+    expr: increase(node_vmstat_oom_kill[5m]) > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host OOM kill detected (instance {{ $labels.hostname }})"
+      description: "OOM kill detected\n  VALUE = {{ $value }}"
+
+  - alert: HostEdacCorrectableErrorsDetected
+    expr: increase(node_edac_correctable_errors_total[5m]) > 0
+    for: 5m
+    labels:
+      severity: info
+    annotations:
+      summary: "Host EDAC Correctable Errors detected (instance {{ $labels.hostname }})"
+      description: '{{ $labels.hostname }} has had {{ printf "%.0f" $value }} correctable memory errors reported by EDAC in the last 5 minutes.\n  VALUE = {{ $value }}'
+
+  - alert: HostEdacUncorrectableErrorsDetected
+    expr: node_edac_uncorrectable_errors_total > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host EDAC Uncorrectable Errors detected (instance {{ $labels.hostname }})"
+      description: '{{ $labels.hostname }} has had {{ printf "%.0f" $value }} uncorrectable memory errors reported by EDAC in the last 5 minutes.\n  VALUE = {{ $value }}'
+
+  # - alert: HostNetworkReceiveErrors
+  #   expr: increase(node_network_receive_errs_total[5m]) > 0
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "Host Network Receive Errors (instance {{ $labels.hostname }})"
+  #     description: '{{ $labels.hostname }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} receive errors in the last five minutes.\n  VALUE = {{ $value }}'
+
+  - alert: HostNetworkTransmitErrors
+    expr: increase(node_network_transmit_errs_total[5m]) > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host Network Transmit Errors (instance {{ $labels.hostname }})"
+      description: '{{ $labels.hostname }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} transmit errors in the last five minutes.\n  VALUE = {{ $value }}'
+
+  - alert: HostNetworkInterfaceSaturated
+    expr: (rate(node_network_receive_bytes_total{device!~"^tap.*"}[1m]) + rate(node_network_transmit_bytes_total{device!~"^tap.*"}[1m])) / node_network_speed_bytes{device!~"^tap.*"} > 0.8
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host Network Interface Saturated (instance {{ $labels.hostname }})"
+      description: 'The network interface "{{ $labels.interface }}" on "{{ $labels.hostname }}" is getting overloaded.\n  VALUE = {{ $value }}'
+
+# blackbox-exporter
+- name: Blackbox
+  rules:
+  - alert: BlackboxProbeFailed
+    expr: probe_success == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Blackbox probe failed (instance {{ $labels.hostname }})"
+      description: "Probe failed\n  VALUE = {{ $value }}"
+
+  - alert: BlackboxSlowProbe
+    expr: avg_over_time(probe_duration_seconds[1m]) > 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Blackbox slow probe (instance {{ $labels.hostname }})"
+      description: "Blackbox probe took more than 1s to complete\n  VALUE = {{ $value }}"
+
+  - alert: BlackboxProbeHttpFailure
+    expr: probe_http_status_code <= 199 OR probe_http_status_code >= 400
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Blackbox probe HTTP failure (instance {{ $labels.hostname }})"
+      description: "HTTP status code is not 200-399\n  VALUE = {{ $value }}"
+
+  - alert: BlackboxSslCertificateWillExpireSoon
+    expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 30
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Blackbox SSL certificate will expire soon (instance {{ $labels.hostname }})"
+      description: "SSL certificate expires in 30 days\n  VALUE = {{ $value }}"
+
+  - alert: BlackboxSslCertificateWillExpireSoon
+    expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 3
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Blackbox SSL certificate will expire soon (instance {{ $labels.hostname }})"
+      description: "SSL certificate expires in 3 days\n  VALUE = {{ $value }}"
+
+  - alert: BlackboxSslCertificateExpired
+    expr: probe_ssl_earliest_cert_expiry - time() <= 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Blackbox SSL certificate expired (instance {{ $labels.hostname }})"
+      description: "SSL certificate has expired already\n  VALUE = {{ $value }}"
+
+  - alert: BlackboxProbeSlowHttp
+    expr: avg_over_time(probe_http_duration_seconds[1m]) > 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Blackbox probe slow HTTP (instance {{ $labels.hostname }})"
+      description: "HTTP request took more than 1s\n  VALUE = {{ $value }}"
+
+  - alert: BlackboxProbeSlowPing
+    expr: avg_over_time(probe_icmp_duration_seconds[1m]) > 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Blackbox probe slow ping (instance {{ $labels.hostname }})"
+      description: "Blackbox ping took more than 1s\n  VALUE = {{ $value }}"
+
+# prometheus/mysqld_exporter
+- name: mysql
+  rules:
+  - alert: MysqlDown
+    expr: mysql_up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "MySQL down (instance {{ $labels.hostname }})"
+      description: "MySQL instance is down on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+
+  - alert: MysqlTooManyConnections
+    expr: avg by (instance,hostname) (max_over_time(mysql_global_status_threads_connected[5m])) / avg by (instance,hostname) (mysql_global_variables_max_connections) * 100 > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MySQL too many connections (instance {{ $labels.hostname }})"
+      description: "More than 80% of MySQL connections are in use on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+
+  - alert: MysqlHighThreadsRunning
+    expr: avg by (instance,hostname) (max_over_time(mysql_global_status_threads_running[5m])) / avg by (instance,hostname) (mysql_global_variables_max_connections) * 100 > 60
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MySQL high threads running (instance {{ $labels.hostname }})"
+      description: "More than 60% of MySQL connections are in running state on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+
+  - alert: MysqlSlaveIoThreadNotRunning
+    expr: mysql_slave_status_master_server_id > 0 and ON (instance,hostname) mysql_slave_status_slave_io_running == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "MySQL Slave IO thread not running (instance {{ $labels.hostname }})"
+      description: "MySQL Slave IO thread not running on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+
+  - alert: MysqlSlaveSqlThreadNotRunning
+    expr: mysql_slave_status_master_server_id > 0 and ON (instance,hostname) mysql_slave_status_slave_sql_running == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "MySQL Slave SQL thread not running (instance {{ $labels.hostname }})"
+      description: "MySQL Slave SQL thread not running on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+
+  - alert: MysqlSlaveReplicationLag
+    expr: mysql_slave_status_master_server_id > 0 and ON (instance,hostname) (mysql_slave_status_seconds_behind_master - mysql_slave_status_sql_delay) > 300
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MySQL Slave replication lag (instance {{ $labels.hostname }})"
+      description: "MysqL replication lag on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+
+  - alert: MysqlSlowQueries
+    expr: rate(mysql_global_status_slow_queries[2m]) > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MySQL slow queries (instance {{ $labels.hostname }})"
+      description: "MySQL server mysql has some new slow query.\n  VALUE = {{ $value }}"
+
+  - alert: MysqlRestarted
+    expr: mysql_global_status_uptime < 60
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MySQL restarted (instance {{ $labels.hostname }})"
+      description: "MySQL has just been restarted, less than one minute ago on {{ $labels.hostname }}.\n  VALUE = {{ $value }}"
+
+  - alert: KafkaTopicsReplicas
+    expr: sum(kafka_topic_partition_in_sync_replica) by (topic) < 3
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Kafka topics replicas (instance {{ $labels.hostname }})"
+      description: "Kafka topic in-sync partition\n  VALUE = {{ $value }}"
+
+  - alert: KafkaConsumersGroup
+    expr: sum(kafka_consumergroup_lag) by (consumergroup) > 50
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Kafka consumers group (instance {{ $labels.hostname }})"
+      description: "Kafka consumers group\n  VALUE = {{ $value }}"
+
+
+# oliver006/redis_exporter
+- name: redis
+  rules:
+  - alert: RedisDown
+    expr: redis_up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis down (instance {{ $labels.hostname }})"
+      description: "Redis instance is down\n  VALUE = {{ $value }}"
+
+  - alert: RedisMissingMaster
+    expr: (count(redis_instance_info{role="master"}) or vector(0)) < 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis missing master (instance {{ $labels.hostname }})"
+      description: "Redis cluster has no node marked as master.\n  VALUE = {{ $value }}"
+
+  - alert: RedisTooManyMasters
+    expr: count(redis_instance_info{role="master"}) > 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis too many masters (instance {{ $labels.hostname }})"
+      description: "Redis cluster has too many nodes marked as master.\n  VALUE = {{ $value }}"
+
+  - alert: RedisDisconnectedSlaves
+    expr: count without (instance, job) (redis_connected_slaves) - sum without (instance, job) (redis_connected_slaves) - 1 > 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis disconnected slaves (instance {{ $labels.hostname }})"
+      description: "Redis not replicating for all slaves. Consider reviewing the redis replication status.\n  VALUE = {{ $value }}"
+
+  - alert: RedisReplicationBroken
+    expr: delta(redis_connected_slaves[1m]) < 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis replication broken (instance {{ $labels.hostname }})"
+      description: "Redis instance lost a slave\n  VALUE = {{ $value }}"
+
+  - alert: RedisClusterFlapping
+    expr: changes(redis_connected_slaves[5m]) > 2
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis cluster flapping (instance {{ $labels.hostname }})"
+      description: "Changes have been detected in Redis replica connection. This can occur when replica nodes lose connection to the master and reconnect (a.k.a flapping).\n  VALUE = {{ $value }}"
+
+  # - alert: RedisMissingBackup
+  #   expr: time() - redis_rdb_last_save_timestamp_seconds > 60 * 60 * 24
+  #   for: 5m
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "Redis missing backup (instance {{ $labels.hostname }})"
+  #     description: "Redis has not been backuped for 24 hours\n  VALUE = {{ $value }}"
+
+  - alert: RedisOutOfMemory
+    expr: redis_memory_used_bytes / redis_total_system_memory_bytes * 100 > 90
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Redis out of memory (instance {{ $labels.hostname }})"
+      description: "Redis is running out of memory (> 90%)\n  VALUE = {{ $value }}"
+
+  - alert: RedisTooManyConnections
+    expr: redis_connected_clients > 500
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Redis too many connections (instance {{ $labels.hostname }})"
+      description: "Redis instance has too many connections\n  VALUE = {{ $value }}"
+
+  - alert: RedisNotEnoughConnections
+    expr: redis_connected_clients < 5
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Redis not enough connections (instance {{ $labels.hostname }})"
+      description: "Redis instance should have more connections (> 5)\n  VALUE = {{ $value }}"
+
+  - alert: RedisRejectedConnections
+    expr: increase(redis_rejected_connections_total[1m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis rejected connections (instance {{ $labels.hostname }})"
+      description: "Some connections to Redis has been rejected\n  VALUE = {{ $value }}"
+
+# (official exporter) rabbitmq/rabbitmq-prometheus rabbitmq自身的prometheus插件
+- name: rabbitmq
+  rules:
+  # - alert: RabbitmqNodeDown
+  #   expr: sum(rabbitmq_build_info) < 3
+  #   for: 5m
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "Rabbitmq node down (instance {{ $labels.hostname }})"
+  #     description: "Less than 3 nodes running in RabbitMQ cluster\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqNodeNotDistributed
+    expr: erlang_vm_dist_node_state < 3
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Rabbitmq node not distributed (instance {{ $labels.hostname }})"
+      description: "Distribution link state is not 'up'\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqInstancesDifferentVersions
+    expr: count(count(rabbitmq_build_info) by (rabbitmq_version)) > 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq instances different versions (instance {{ $labels.hostname }})"
+      description: "Running different version of Rabbitmq in the same cluster, can lead to failure.\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqMemoryHigh
+    expr: rabbitmq_process_resident_memory_bytes / rabbitmq_resident_memory_limit_bytes * 100 > 90
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq memory high (instance {{ $labels.hostname }})"
+      description: "A node use more than 90% of allocated RAM\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqFileDescriptorsUsage
+    expr: rabbitmq_process_open_fds / rabbitmq_process_max_fds * 100 > 90
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq file descriptors usage (instance {{ $labels.hostname }})"
+      description: "A node use more than 90% of file descriptors\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqTooMuchUnack
+    expr: sum(rabbitmq_queue_messages_unacked) BY (queue) > 1000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq too much unack (instance {{ $labels.hostname }})"
+      description: "Too much unacknowledged messages\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqTooMuchConnections
+    expr: rabbitmq_connections > 1000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq too much connections (instance {{ $labels.hostname }})"
+      description: "The total connections of a node is too high\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqNoQueueConsumer
+    expr: rabbitmq_queue_consumers < 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq no queue consumer (instance {{ $labels.hostname }})"
+      description: "A queue has less than 1 consumer\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqUnroutableMessages
+    expr: increase(rabbitmq_channel_messages_unroutable_returned_total[5m]) > 0 or increase(rabbitmq_channel_messages_unroutable_dropped_total[5m]) > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq unroutable messages (instance {{ $labels.hostname }})"
+      description: "A queue has unroutable messages\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqDown
+    expr: rabbitmq_up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Rabbitmq down (instance {{ $labels.hostname }})"
+      description: "RabbitMQ node down\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqClusterDown
+    expr: sum(rabbitmq_running) < 3
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Rabbitmq cluster down (instance {{ $labels.hostname }})"
+      description: "Less than 3 nodes running in RabbitMQ cluster\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqClusterPartition
+    expr: rabbitmq_partitions > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Rabbitmq cluster partition (instance {{ $labels.hostname }})"
+      description: "Cluster partition\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqOutOfMemory
+    expr: rabbitmq_node_mem_used / rabbitmq_node_mem_limit * 100 > 90
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq out of memory (instance {{ $labels.hostname }})"
+      description: "Memory available for RabbmitMQ is low (< 10%)\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqTooManyConnections
+    expr: rabbitmq_connectionsTotal > 1000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq too many connections (instance {{ $labels.hostname }})"
+      description: "RabbitMQ instance has too many connections (> 1000)\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqDeadLetterQueueFillingUp
+    expr: rabbitmq_queue_messages{queue="my-dead-letter-queue"} > 10
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Rabbitmq dead letter queue filling up (instance {{ $labels.hostname }})"
+      description: "Dead letter queue is filling up (> 10 msgs)\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqTooManyMessagesInQueue
+    expr: rabbitmq_queue_messages_ready{queue="my-queue"} > 1000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq too many messages in queue (instance {{ $labels.hostname }})"
+      description: "Queue is filling up (> 1000 msgs)\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqSlowQueueConsuming
+    expr: time() - rabbitmq_queue_head_message_timestamp{queue="my-queue"} > 60
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq slow queue consuming (instance {{ $labels.hostname }})"
+      description: "Queue messages are consumed slowly (> 60s)\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqNoConsumer
+    expr: rabbitmq_queue_consumers == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Rabbitmq no consumer (instance {{ $labels.hostname }})"
+      description: "Queue has no consumer\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqTooManyConsumers
+    expr: rabbitmq_queue_consumers > 100
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Rabbitmq too many consumers (instance {{ $labels.hostname }})"
+      description: "Queue should have only 100 consumer\n  VALUE = {{ $value }}"
+
+  - alert: RabbitmqUnactiveExchange
+    expr: rate(rabbitmq_exchange_messages_published_in_total{exchange="my-exchange"}[1m]) < 5
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rabbitmq unactive exchange (instance {{ $labels.hostname }})"
+      description: "Exchange receive less than 5 msgs per second\n  VALUE = {{ $value }}"
+
+
+# ceph本身的prometheus插件
+- name: ceph
+  rules:
+  - alert: CephState
+    expr: ceph_health_status != 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Ceph State (instance {{ $labels.hostname }})"
+      description: "Ceph instance unhealthy\n  VALUE = {{ $value }}"
+
+  - alert: CephMonitorClockSkew
+    expr: abs(ceph_monitor_clock_skew_seconds) > 0.2
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Ceph monitor clock skew (instance {{ $labels.hostname }})"
+      description: "Ceph monitor clock skew detected. Please check ntp and hardware clock settings\n  VALUE = {{ $value }}"
+
+  - alert: CephMonitorLowSpace
+    expr: ceph_monitor_avail_percent < 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Ceph monitor low space (instance {{ $labels.hostname }})"
+      description: "Ceph monitor storage is low.\n  VALUE = {{ $value }}"
+
+  - alert: CephOsdDown
+    expr: ceph_osd_up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Ceph OSD Down (instance {{ $labels.hostname }})"
+      description: "Ceph Object Storage Daemon Down\n  VALUE = {{ $value }}"
+
+  - alert: CephHighOsdLatency
+    expr: ceph_osd_perf_apply_latency_seconds > 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Ceph high OSD latency (instance {{ $labels.hostname }})"
+      description: "Ceph Object Storage Daemon latetncy is high. Please check if it doesn't stuck in weird state.\n  VALUE = {{ $value }}"
+
+  - alert: CephOsdLowSpace
+    expr: ceph_osd_utilization > 90
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Ceph OSD low space (instance {{ $labels.hostname }})"
+      description: "Ceph Object Storage Daemon is going out of space. Please add more disks.\n  VALUE = {{ $value }}"
+
+  - alert: CephOsdReweighted
+    expr: ceph_osd_weight < 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Ceph OSD reweighted (instance {{ $labels.hostname }})"
+      description: "Ceph Object Storage Daemon take ttoo much time to resize.\n  VALUE = {{ $value }}"
+
+  - alert: CephPgDown
+    expr: ceph_pg_down > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Ceph PG down (instance {{ $labels.hostname }})"
+      description: "Some Ceph placement groups are down. Please ensure that all the data are available.\n  VALUE = {{ $value }}"
+
+  - alert: CephPgIncomplete
+    expr: ceph_pg_incomplete > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Ceph PG incomplete (instance {{ $labels.hostname }})"
+      description: "Some Ceph placement groups are incomplete. Please ensure that all the data are available.\n  VALUE = {{ $value }}"
+
+  - alert: CephPgInconsistant
+    expr: ceph_pg_inconsistent > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Ceph PG inconsistant (instance {{ $labels.hostname }})"
+      description: "Some Ceph placement groups are inconsitent. Data is available but inconsistent across nodes.\n  VALUE = {{ $value }}"
+
+  - alert: CephPgActivationLong
+    expr: ceph_pg_activating > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Ceph PG activation long (instance {{ $labels.hostname }})"
+      description: "Some Ceph placement groups are too long to activate.\n  VALUE = {{ $value }}"
+
+  - alert: CephPgBackfillFull
+    expr: ceph_pg_backfill_toofull > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Ceph PG backfill full (instance {{ $labels.hostname }})"
+      description: "Some Ceph placement groups are located on full Object Storage Daemon on cluster. Those PGs can be unavailable shortly. Please check OSDs, change weight or reconfigure CRUSH rules.\n  VALUE = {{ $value }}"
+
+  - alert: CephPgUnavailable
+    expr: ceph_pg_total - ceph_pg_active > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Ceph PG unavailable (instance {{ $labels.hostname }})"
+      description: "Some Ceph placement groups are unavailable.\n  VALUE = {{ $value }}"
+
+# jenkins
+- name: jenkins
+  rules:
+  - alert: JenkinsLastBuildResult
+    expr: default_jenkins_builds_last_build_result == 0
+    for: 5m
+    labels:
+      severity: warning
+      item: build_status
+    annotations:
+      summary: "Jenkins Job Failure (instance {{ $labels.hostname }})"
+      description: "{{ $labels.jenkins_job }}"

@@ -1,0 +1,23 @@
+{{ define "wechat.default.message" }}
+{{- if gt (len .Alerts.Firing) 0 -}}{{ range .Alerts }}
+== 警告 ==
+监控机: {{ .Labels.environment }}
+类型: {{ .Labels.alertname }}
+级别: {{ .Labels.severity }}
+主机: {{ .Labels.hostname }}
+概要: {{ .Annotations.summary }}
+描述: {{ .Annotations.description }}
+触发时间: {{ (.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}
+{{ end }}{{ end -}}
+{{- if gt (len .Alerts.Resolved) 0 -}}{{ range .Alerts }}
+== 恢复 ==
+监控机: {{ .Labels.environment }}
+类型: {{ .Labels.alertname }}
+级别: {{ .Labels.severity }}
+主机: {{ .Labels.hostname }}
+概要: {{ .Annotations.summary }}
+描述: {{ .Annotations.description }}
+触发时间: {{ (.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}
+恢复时间: {{ (.EndsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}
+{{ end }}{{ end -}}
+{{- end }}

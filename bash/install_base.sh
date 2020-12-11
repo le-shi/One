@@ -1,0 +1,2 @@
+#!/bin/sh
+yum -y install wget tree vim lrzsz mlocate telnet nmap iotop strace gdb net-tools lsof git python-pip ShellCheck jq bash-completion gcc gcc-c++ make cmake zlib zlib-devel openssl openssl-devel nss rsync epel-release lzo-devel pam-devel unzip

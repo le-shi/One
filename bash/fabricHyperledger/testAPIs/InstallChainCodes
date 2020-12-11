@@ -1,0 +1,15 @@
+echo "POST Install chaincode on Org1"
+echo
+curl -s -X POST \
+  http://localhost:4000/chaincodes \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+	\"peers\": [\"peer0.org1.unichain.org.cn\",\"peer1.org1.unichain.org.cn\"],
+	\"chaincodeName\":\"chain\",
+	\"chaincodePath\":\"$CC_SRC_PATH\",
+	\"chaincodeType\": \"$LANGUAGE\",
+	\"chaincodeVersion\":\"v0\"
+}"
+echo
+echo

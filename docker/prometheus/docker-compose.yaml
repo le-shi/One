@@ -1,0 +1,142 @@
+version: '2'
+
+networks:
+  ops:
+    external: true
+
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.23.0
+    hostname: prometheus-server
+    restart: always
+    ports:
+      - "9090:9090"
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus", "--web.console.libraries=/usr/share/prometheus/console_libraries", "--web.console.templates=/usr/share/prometheus/consoles", "--web.enable-lifecycle"]
+    volumes:
+      - "./volume/prometheus/data:/prometheus"
+      - "./volume/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./volume/prometheus/config/targets.yml:/etc/prometheus/targets.yml"
+      - "./volume/prometheus/config/alertmanager-rules.yml:/etc/prometheus/rules/alertmanager-rules.yml"
+    networks:
+      - ops
+
+  alertmanager:
+    container_name: alertmanager
+    image: prom/alertmanager:v0.21.0
+    hostname: alertmanager
+    restart: always
+    mem_limit: 500M
+    ports:
+      - "9093:9093"
+    volumes:
+      - "./volume/alertmanager/data:/data"
+      - "./volume/alertmanager/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml"
+      - "./volume/alertmanager/config/wechat.tmpl:/etc/alertmanager/templates/wechat.tmpl"
+    networks:
+      - ops
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:7.3.4
+    hostname: grafana
+    restart: always
+    user: root
+    environment:
+      - "GF_SERVER_ROOT_URL=http://grafana.ops.cn"
+      - "GF_SECURITY_ADMIN_PASSWORD=admin!@#"
+      - "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel"
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./volume/grafana/data:/var/lib/grafana"
+    networks:
+      - ops
+
+  node:
+    container_name: node-prom
+    image: quay.io/prometheus/node-exporter:v1.0.1
+    restart: always
+    command: --path.rootfs=/host
+    ports:
+      - "9100:9100"
+    volumes:
+      - "/:/host:ro,rslave"
+    pid: host
+    networks:
+      - ops
+
+  cadvisor:
+    container_name: cadvisor-prom
+    image: google/cadvisor:v0.32.0
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:rw"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+    networks:
+      - ops
+
+  mysqlexporter:
+    container_name: mysqld-exporter
+    image: prom/mysqld-exporter
+    restart: always
+    ports:
+      - "9104:9104"
+    environment:
+      - DATA_SOURCE_NAME=test:test@(mysql:3306)/test
+    networks:
+      - ops
+
+# rabbitmq_exporter
+  rabbitmq_exporter:
+    container_name: rabbitmq_exporter-ms.lab
+    image: google/cadvisor:latest
+    ports:
+      - "9672:9672"
+    volumes:
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:rw"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+    networks:
+      - ops
+
+# redis_exporter
+  redis_exporter:
+    container_name: redis_exporter
+    image: oliver006/redis_exporter:v1.6.1-amd64
+    environment:
+      - REDIS_ADDR=redis
+      - REDIS_PASSWORD=14YVeC0PToxRIAs
+    ports:
+      - "9121:9121"
+    networks:
+      - ops
+
+# blackbox
+  blackbox:
+    container_name: blackbox-exporter
+    image: prometheus/blackbox-exporter:v0.18.0
+    command: ["--config.file=/config/blackbox.yml"]
+    volumes:
+      - "./volume/prometheus/config/blackbox.yml:/config/blackbox.yml"
+    restart: always
+    ports:
+      - "9115:9115"
+    networks:
+      - ops
+
+  openstack-exporter:
+    container_name: openstack-exporter
+    image: quay.io/niedbalski/openstack-exporter-linux-amd64:v1.0.0
+    volumes:
+      - ./volume/prometheus/config/clouds.yaml:/etc/openstack/clouds.yaml
+    ports:
+      - 9180:9180
+    command: openstack
+    networks:
+      - ops

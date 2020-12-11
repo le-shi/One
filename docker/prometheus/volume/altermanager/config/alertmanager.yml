@@ -1,0 +1,46 @@
+# 全局配置项
+global:
+  # 处理超时时间,默认为5min
+  resolve_timeout: 5m
+
+# 模板路径
+templates:
+  - "templates/*.tmpl"
+
+# 定义路由树信息
+route:
+  # 报警分组
+  group_by: [alertname]
+  # 第一次等待多长时间发送一组警报的通知,在组内等待所配置的时间，如果同组内，30秒内出现相同报警，在一个组内出现。
+  group_wait: 30s
+  # 如果组内内容不变化，合并为一条警报信息，3m后发送。
+  group_interval: 3m
+  # 发送报警间隔，如果指定时间内没有修复，则重新发送报警。
+  repeat_interval: 1h
+  # 选择警告发送器分组 one_wx
+  receiver: 'one_wx'
+
+# 警告发送器分组的列表
+receivers:
+# one_wx分组的定义
+- name: 'one_wx'
+  # 微信配置
+  wechat_configs:
+  - send_resolved: true
+    to_party: 22 
+    agent_id: '1000023' 
+    corp_id: 'wwf1d319ac8932285e6'
+    api_secret: 'EE15UQ9CJ9A22H4eT-bUIbVSMPicJPf5tgQCIguSN4'
+
+# 抑制规则的列表
+# inhibit_rules:
+# # 源标签警报触发时抑制含有目标标签的警报，在当前警报匹配 severity: 'critical'
+#   - source_match:
+#         # 此处的抑制匹配一定在最上面的route中配置不然，会提示找不key
+#       severity: 'critical'
+#     target_match:
+#       # 目标标签值正则匹配，可以是正则表达式如: ".*MySQL.*"
+#       severity: 'warning'
+#     # 确保这个配置下的标签内容相同才会抑制，也就是说警报中必须有这三个标签值才会被抑制。
+#     equal: ['alertname', 'dev', 'instance']
+
