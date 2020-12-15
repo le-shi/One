@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
-#.......支持每家机构配置单独的密码
-#......支持n家证书生成、合并、生成创世纪块
-#.....支持ca高可用<caServerAddress>
-#....合并了动态加org脚本，包括：文件系统上的配置文件生成，org容器和cli容器的启动，
-#...以及cli内部添加org操作的脚本。
-#..cli内部添加org的脚本是通过cli的docker-compose文件，以volumes的方式挂载到了cli容器里，
-#.可以通过执行docker exec cli bash xxx/xxx.sh，来进行新org的签名，更新。
+#支持每家机构配置单独的密码
+#支持n家证书生成、合并、生成创世纪块
+#支持ca高可用<caServerAddress>
+#合并了动态加org脚本，包括：文件系统上的配置文件生成，org容器和cli容器的启动，
+#以及cli内部添加org操作的脚本。
+#cli内部添加org的脚本是通过cli的docker-compose文件，以volumes的方式挂载到了cli容器里，
+#可以通过执行docker exec cli bash xxx/xxx.sh，来进行新org的签名，更新。
 #xxx.json文件同样通过cli的docker-compose文件，用volumes定义，挂载在了容器里
 ################################################################################
 #Use:
@@ -41,7 +41,8 @@ set -e
 # cd ~/go/bin
 # rm -rf ca-cert.pem  fabric-ca-server-config.yaml  msp  nohup.out IssuerPublicKey  IssuerRevocationPublicKey
 # kill -9 `ps -ef | grep ca | awk '/fabric/{print $2}'`
-#
+
+
 # #SQLite方式启动
 # #SQLite启动fabric-ca
 # nohup ./fabric-ca-server start \

@@ -1,5 +1,6 @@
 #!/bin/bash
 set -ex
+echo "This is script is bad."&& exit 2
 #支持n家证书生成、合并、生成创世纪块
 #支持ca高可用<caServerAddress>
 #合并了动态加org脚本，包括：文件系统上的配置文件生成，org容器和cli容器的启动，

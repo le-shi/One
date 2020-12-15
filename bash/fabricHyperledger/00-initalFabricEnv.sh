@@ -9,6 +9,30 @@ UserHome=/home/${UserName}
 GoVersion=1.10.2
 NodeVersion=8.9.4
 SamplesVersion=1.3
+
+###
+# file: fabric-samples/balance-transfer/package.json
+# {
+#   ...
+#   "dependencies": {
+#     "fabric-ca-client": "unstable",
+#     "fabric-client": "unstable",
+#     ...
+#   }
+# }
+
+# to -->
+
+# {
+#   ...
+#   "dependencies": {
+#     "fabric-ca-client": "1.3.0",
+#     "fabric-client": "1.3.0",
+#     ...
+#   }
+# }
+###
+
 #ComposeVersion=1.20.1
 GoPackage=go${GoVersion}.linux-amd64.tar.gz
 NodePackage=node-v${NodeVersion}-linux-x64.tar.gz
