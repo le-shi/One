@@ -67,5 +67,4 @@ curl -s -X GET \
 echo
 echo
 
-
 echo "Total execution time : $(($(date +%s)-starttime)) secs ..."

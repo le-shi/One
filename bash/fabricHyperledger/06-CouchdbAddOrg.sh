@@ -1,6 +1,6 @@
 #!/bin/bash
 ###初始化couchdb
-listFile=~/orgList
+listFile=./orgList
 
 AddOrg1 (){
   curl -s -X POST http://localhost:4000/channels/mychannel/chaincodes/chain -H "authorization: Bearer ${TOKEN}" -H "content-type: application/json" -d '{"fcn":"addOrg","args":["org1","{\"name\":\"zbx1\",\"certNo\":\"zbx1\",\"certDate\":\"2018-11-09\",\"legalPerson\":\"liuqingbo1\",\"email\":\"zbx1@zbxsoft.com\",\"mobile\":\"18900099889\",\"level\":\"1\",\"certValidityStart\":\"2017-11-09\",\"certValidityEnd\":\"2019-11-09\",\"province\":\"beijing\"}"]}'

@@ -1,8 +1,9 @@
 #!/bin/bash
 # 生成的testAPIs.sh只能执行到实例化
+cd $(dirname $0)
 
 setFor (){
-  ofile=~/orgList
+  ofile=../orgList
   funcName=${1}
   grep -Ev "#|^$" ${ofile} | while read line
   do
@@ -65,3 +66,4 @@ echoFile (){
 }
 
 echoFile > testAPIs.sh
+chmod +x testAPIs.sh

@@ -50,27 +50,44 @@ set -e
 # -b admin:adminpw \
 # --cfg.affiliations.allowremove \
 # --cfg.identities.allowremove &
+
+# # docker - sqlite 方式启动 
+# docker run -d \
+# -p 7054:7054 \
+# -v "$(pwd)":/etc/hyperledger \
+# --name fabric-ca \
+# cr.xuanwuku.com/hyperledger/fabric-ca:1.3.0 \
+# fabric-ca-server \
+# start \
+# --ca.name ca \
+# -b admin:adminpw \
+# --cfg.affiliations.allowremove \
+# --cfg.identities.allowremove
 ################################################################################
+
+
+SamplesVersion=1.3.0
+OtherVersion=0.4.13
+imageAddr=cr.xuanwuku.com/hyperledger
 
 #var
 # unichain.org.cn
 # orderer.unichain.org.cn
 # org[n].orderer.unichain.org.cn
-
 domainName=unichain.org.cn
 ordererDomainName=orderer.${domainName}
 # CA地址
-caServerAddress=60.205.136.4:7054
+caServerAddress=10.100.100.5:7054
 # Orderer地址
-ordererAddress=60.205.136.4:7050
+ordererAddress=10.100.100.5:7050
 #_node app是容器的话peer的地址写容器内的地址peer0.org1.${domainName}:7051
-#_node app是普通程序的话peer的地址写宿主机的外网地址xx.xx.xx.xx:7051
+#_node app是普通程序的话peer的地址写宿主机的外网地址xx.xx.xx.xx
 # peer0地址
-peer0sAddress=60.205.136.4
+peer0sAddress=10.100.100.5
 # peer1地址
-peer1sAddress=60.205.136.4
+peer1sAddress=10.100.100.5
 #node 地址
-nodeAppAddress=60.205.136.4
+nodeAppAddress=10.100.100.5
 # swarm network name
 networkName=microservices
 idSecret=password
@@ -85,21 +102,23 @@ unionRootCa=$(echo $domainName | awk -F "." '{print $NF}')
 unionSecond=${unionRootCa}.$(echo $domainName | awk -F "." '{print $(NF-1)}')
 unionOrderer=${unionSecond}.$(echo $domainName | awk -F "." '{print $(NF-2)}')
 
-deployDirectory=~/fabric-deploy
+# 基础目录, 根据当前操作目录修改
+export baseDir=/home/${USER}/fabricHyperledger
+deployDirectory=${baseDir}/fabric-deploy
 caDeployDirectory=${deployDirectory}/fabric-ca-files
 adminDirectory=${caDeployDirectory}/admin
 ordererDirectory=${caDeployDirectory}/${domainName}
 ordererAdminDirectory=${ordererDirectory}/admin
 ordererOrdererDirectory=${ordererDirectory}/orderer
-fabricDirectory=/home/${USER}/fabric-samples
+fabricDirectory=${baseDir}/fabric-samples
 cryptogenDirectory=${fabricDirectory}/balance-transfer/artifacts/channel
 cryptogenConfig=cryptogen.yaml
 fabricCaClientPath=${adminDirectory}
 fabricCaClientConfig=fabric-ca-client-config.yaml
 fabricNetworkConfigName=network-config.yaml
 balanceDeployDirectory=${fabricDirectory}/balance-cau
-staticFile=~/orgList
-dynamicFile=~/dynamicList
+staticFile=${baseDir}/orgList
+dynamicFile=${baseDir}/dynamicList
 
 
 CHANNEL_NAME="$4"
@@ -138,6 +157,10 @@ Format: orgname;peer0 port1,port2;peer1 port3,port4;couchdb port5,port6;123456
 Bg: org4;peer0 10051,10053;peer1 10056,10058;couchdb 10981,10986;123456
 """ && exit 1)
 
+case ${1} in
+  clean|startca):;;
+  *)[ -d ${balanceDeployDirectory} ] && (echo "MSP cert Directory: ${balanceDeployDirectory} already existed" && exit 2);;
+esac
 
 listFile=${staticFile}
 
@@ -163,6 +186,9 @@ fabricHelp (){
   echo
   echo
   echo "Flags:"
+  echo
+  echo "Other:"
+  echo "  startca docker方式启动fabric-ca"
   echo ""
 }
 
@@ -227,6 +253,10 @@ fabricEchoAdd (){
   grep "${line}" ${MAIN_LIST} || (sed -i "\$i\\${line}" ${MAIN_LIST} && echo "动态文件机构加入到orgList ...")
 }
 
+fabricCleanInital(){
+  docker rm -f fabric-ca
+  rm -rf ${deployDirectory} fabric-ca-server/ ${balanceDeployDirectory}
+}
 
 ####################初始化配置####################
 #获取ca Server命令行代码 #暂时停用
@@ -234,6 +264,39 @@ fabricCaCmd (){
   echo "CheckOut github.com/hyperledger/fabric-ca/cmd/..."
   #首先获取fabric-ca server cmd
   [[ -d ~/go/bin ]] || go get -u github.com/hyperledger/fabric-ca/cmd/...
+}
+
+# docker方式启动ca - sqlite
+fabricCaStart (){
+  # 如果是普通用户运行, 使用-u参数, 可以进行反复测试, 不然普通用户无法删除挂载目录
+  echo "Starting... fabric-ca"
+  if $(docker ps | grep -q fabric-ca);then
+    echo "fabric-ca Server is started!"
+  else
+    docker run -d \
+    -p 7054:7054 \
+    -v "$(pwd)":/etc/hyperledger \
+    --name fabric-ca \
+    -u 1000:1000 \
+    cr.xuanwuku.com/hyperledger/fabric-ca:1.3.0 \
+    fabric-ca-server \
+    start \
+    --ca.name ca \
+    -b admin:adminpw \
+    --cfg.affiliations.allowremove \
+    --cfg.identities.allowremove
+
+    sleep 3
+    docker logs fabric-ca
+    echo "Check ca status"
+    CaServerStatus=$(curl -I -m 10 -o /dev/null -s -w %{http_code} ${caServerAddress} || :)
+    if [ ${CaServerStatus} -eq 404 ];then
+      echo "fabric-ca is started."
+    else
+      echo "fabric-ca Server start is not expire."
+      exit 1
+    fi
+  fi
 }
 
 #create admin msp
@@ -564,7 +627,7 @@ fabricDockerComposeConfigHead (){
 fabricDockerComposeConfigOrderer (){
   echo "  ${ordererDomainName}:"
   echo "    container_name: ${ordererDomainName}"
-  echo "    image: hyperledger/fabric-orderer"
+  echo "    image: ${imageAddr}/fabric-orderer:${SamplesVersion}"
   echo "    environment:"
   echo "      - ORDERER_GENERAL_LOGLEVEL=debug"
   echo "      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0"
@@ -654,7 +717,7 @@ fabricDockerComposeConfigPeer1s (){
 fabricDockerComposeConfigPeer0sCouchdb (){
   echo "  couchdb0.${org}.${domainName}:"
   echo "    container_name: couchdb0.${org}.${domainName}"
-  echo "    image: hyperledger/fabric-couchdb"
+  echo "    image: ${imageAddr}/fabric-couchdb:${OtherVersion}"
   echo "    environment:"
   echo "      - COUCHDB_USER=${couchdb_username}"
   echo "      - COUCHDB_PASSWORD=${couchdb_password}"
@@ -667,7 +730,7 @@ fabricDockerComposeConfigPeer0sCouchdb (){
 fabricDockerComposeConfigPeer1sCouchdb (){
   echo "  couchdb1.${org}.${domainName}:"
   echo "    container_name: couchdb1.${org}.${domainName}"
-  echo "    image: hyperledger/fabric-couchdb"
+  echo "    image: ${imageAddr}/fabric-couchdb:${OtherVersion}"
   echo "    environment:"
   echo "      - COUCHDB_USER=${couchdb_username}"
   echo "      - COUCHDB_PASSWORD=${couchdb_password}"
@@ -683,7 +746,7 @@ fabricDockerComposeCliConfigure (){
   echo "services:"
   echo "  cli:"
   echo "    container_name: cli"
-  echo "    image: hyperledger/fabric-tools"
+  echo "    image: ${imageAddr}/fabric-tools:${SamplesVersion}"
   echo "    tty: true"
   echo "    stdin_open: true"
   echo "    environment:"
@@ -802,6 +865,39 @@ fabricConfigJsOrgs (){
 fabricConfigJsBottom (){
 	echo "hfc.addConfigFile(path.join(__dirname, 'config.json'));"
 }
+
+#docker-compose-nodeapp.yaml 文件生成
+fabricConfigNodeAppYamlConfig(){
+  echo """version: '2'
+
+networks:
+ microservices:
+   external: true
+#  fabric:
+#    external: true
+
+services:
+  nodeapp:
+    container_name: nodeapp
+    image: ${imageAddr}/nodeapp:${SamplesVersion}
+    # environment:
+    #   - rc_ip=ms.zbx.lab
+    #   - me_ip=docker-compose-nodeapp.yaml
+    volumes:
+      - ../artifacts:/home/node/app/artifacts/
+      - ../config.js:/home/node/app/config.js
+      - ../app/helper.js:/home/node/app/app/helper.js
+      - ../kvstore:/home/node/app/kvstore/
+      - /tmp:/tmp
+    ports:
+      - 4000:4000    
+    networks:
+      microservices:
+        # ipv4_address: 10.0.0.100
+      # fabric:
+"""
+}
+
 ####################合并文件配置####################
 #生成Orderer CA configure
 fabricOrdererCaConfigure (){
@@ -895,7 +991,6 @@ fabricDockerComposePeer1sConfig (){
   fabricFor fabricDockerComposeConfigPeer1s
   fabricFor fabricDockerComposeConfigPeer1sCouchdb
 } 
-
 
 
 #生成configtx.yaml configure
@@ -1021,6 +1116,11 @@ fabricNewConfigtxConfig (){
 fabricNewConfigJsConfig (){
   fabricConfigJsConfig > ${balanceDeployDirectory}/config.js
 }
+
+#开始操作docker-compose-nodeapp.yaml 文件生成
+fabricNewConfigNodeAppConfig (){
+  fabricConfigNodeAppYamlConfig > ${balanceDeployDirectory}/artifacts/docker-compose-nodeapp.yaml
+}
 ####################证书清理配置####################
 #清理自动生成的认证文件
 fabricOrdererConfigClean (){
@@ -1142,7 +1242,7 @@ fabricConfigDockerCompose (){
   fabricNetworkSetTwo
   echo "  couchdb0.${org}.${domainName}:"
   echo "    container_name: couchdb0.${org}.${domainName}"
-  echo "    image: hyperledger/fabric-couchdb"
+  echo "    image: ${imageAddr}/fabric-couchdb:${OtherVersion}"
   echo "    environment:"
   echo "      - COUCHDB_USER=${couchdb_username}"
   echo "      - COUCHDB_PASSWORD=${couchdb_password}"
@@ -1151,7 +1251,7 @@ fabricConfigDockerCompose (){
   fabricNetworkSetTwo
   echo "  couchdb1.${org}.${domainName}:"
   echo "    container_name: couchdb1.${org}.${domainName}"
-  echo "    image: hyperledger/fabric-couchdb"
+  echo "    image: ${imageAddr}/fabric-couchdb:${OtherVersion}"
   echo "    environment:"
   echo "      - COUCHDB_USER=${couchdb_username}"
   echo "      - COUCHDB_PASSWORD=${couchdb_password}"
@@ -1167,7 +1267,7 @@ fabricCliConfigure (){
   echo "services:"
   echo "  cli:"
   echo "    container_name: cli"
-  echo "    image: hyperledger/fabric-tools"
+  echo "    image: ${imageAddr}/fabric-tools:${SamplesVersion}"
   echo "    tty: true"
   echo "    stdin_open: true"
   echo "    environment:"
@@ -1320,13 +1420,28 @@ fabricInitalRunApp (){
   echo "Clean cryptogen-config directory..."
   rm -r $(ls -F | grep "/$" | grep -v "new/")
   mv crypto-config-new crypto-config
-  echo "Clean succeed.Rename cryptogen-config"
+  echo "Clean succeed. Rename cryptogen -> config"
   echo
   directiryCd ${balanceDeployDirectory}
   # sed -i "s/example.com/${domainName}/g" testAPIs.sh
-  # sed -i "s/affiliation: userOrg.toLowerCase() + '.department1'/affiliation: \'${unionOrderer}.\' + userOrg.toLowerCase()/" app/helper.js
-  # sed -i "s/60000/600000/g" app/instantiate-chaincode.js
-  sed -i "s/artifacts_default/${networkName}/g" artifacts/base.yaml
+  sed -i "s/affiliation: userOrg.toLowerCase() + '.department1'/affiliation: \'${unionOrderer}.\' + userOrg.toLowerCase(),\n\t\t\t\tmaxEnrollments: -1/" app/helper.js
+  sed -i -e "s/60000/600000/g" -e "s/2-of/1-of/g" app/instantiate-chaincode.js
+  sed -i -e "s/artifacts_default/${networkName}/g" \
+  -e "s|image: hyperledger/fabric-peer|image: ${imageAddr}/fabric-peer:${SamplesVersion}|g" artifacts/base.yaml
+
+  # 修改package.json, 固定fabric-ca-client和fabric-client的版本
+  sed -i "s/unstable/${SamplesVersion}/g" package.json
+
+  # 修改runApp.sh, 过滤容器fabric-ca, 避免误杀
+  sed -i -e "s/docker ps -aq/docker ps -a | grep -Ev 'CONTAINER|fabric-ca' | awk '{print \$1}'/g" \
+  -e 's|npm install|docker-compose -f ./artifacts/docker-compose-nodeapp.yaml up -d|g' \
+  -e "s|PORT=4000 node app|docker logs -f nodeapp|g" runApp.sh
+
+  # 创建链码目录
+  mkdir -pv artifacts/src/github.com/chain/go
+
+  # 生成nodeapp的启动文件
+  fabricNewConfigNodeAppConfig
 
   fabricNewNetworkConfig
   fabricNewDockerComposeConfig
@@ -1376,7 +1491,7 @@ fabricStaticInitalization (){
   fabricFor fabricInitalOrg
   # 4.runapp && testapi
   fabricInitalRunApp
-  sed -i "s/#inital)fabricStaticInitalization;;/##inital)fabricStaticInitalization;;/g" ~/$0
+  sed -i "s/^  inital)fabricStaticInitalization;;/  #inital)fabricStaticInitalization;;/g" ${baseDir}/$0
   echo "提示: 初始化操作只能执行一次！！！"
 }
 
@@ -1399,6 +1514,8 @@ case $status in
   inital)fabricStaticInitalization;;
   dynamic)fabricDyncmicallyAddOrg;;
   help|h)fabricHelp;;
+  startca)fabricCaStart;;
+  clean)fabricCleanInital;;
   *)fabricHelp;;
 esac
 
@@ -1406,5 +1523,5 @@ echo "MSP cert Directory: ${balanceDeployDirectory}"
 echo "..."
 
 
-#_for  i in `grep -n "  peer0" artifacts/docker-compose.yaml \ 
+#_for  i in `grep -n "  peer0" artifacts/docker-compose.yaml \
 #_| awk -F ":" '{print $1}'| tac`;do sed -i "${i},`expr $i + 15`d" artifacts/docker-compose.yaml;done

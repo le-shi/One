@@ -56,6 +56,7 @@ services:
   node:
     container_name: node-prom
     image: quay.io/prometheus/node-exporter:v1.0.1
+    hostname: ops
     restart: always
     command: --path.rootfs=/host
     ports:
@@ -88,20 +89,6 @@ services:
       - "9104:9104"
     environment:
       - DATA_SOURCE_NAME=test:test@(mysql:3306)/test
-    networks:
-      - ops
-
-# rabbitmq_exporter
-  rabbitmq_exporter:
-    container_name: rabbitmq_exporter-ms.lab
-    image: google/cadvisor:latest
-    ports:
-      - "9672:9672"
-    volumes:
-      - "/:/rootfs:ro"
-      - "/var/run:/var/run:rw"
-      - "/sys:/sys:ro"
-      - "/var/lib/docker/:/var/lib/docker:ro"
     networks:
       - ops
 

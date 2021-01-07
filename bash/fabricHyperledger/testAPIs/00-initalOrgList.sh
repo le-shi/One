@@ -1,5 +1,6 @@
 portNum=7
-echo -n > ~/orgList
+cd $(dirname $0)
+echo -n > ../orgList
 MaxNum=${1:-20}
 
 for i in `seq 1 ${MaxNum}`;
