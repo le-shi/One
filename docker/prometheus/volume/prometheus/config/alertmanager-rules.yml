@@ -9,7 +9,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Prometheus job missing (instance {{ $labels.hostname }})"
+      summary: "Prometheus job missing (instance {{ $labels.instance }})"
       description: "A Prometheus job has disappeared\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTargetMissing
@@ -18,7 +18,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus target missing (instance {{ $labels.hostname }})"
+      summary: "Prometheus target missing (instance {{ $labels.instance }})"
       description: "A Prometheus target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}"
 
   - alert: PrometheusAllTargetsMissing
@@ -27,7 +27,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus all targets missing (instance {{ $labels.hostname }})"
+      summary: "Prometheus all targets missing (instance {{ $labels.instance }})"
       description: "A Prometheus job does not have living target anymore.\n  VALUE = {{ $value }}"
 
   - alert: PrometheusConfigurationReloadFailure
@@ -36,7 +36,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Prometheus configuration reload failure (instance {{ $labels.hostname }})"
+      summary: "Prometheus configuration reload failure (instance {{ $labels.instance }})"
       description: "Prometheus configuration reload error\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTooManyRestarts
@@ -45,7 +45,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Prometheus too many restarts (instance {{ $labels.hostname }})"
+      summary: "Prometheus too many restarts (instance {{ $labels.instance }})"
       description: "Prometheus has restarted more than twice in the last 15 minutes. It might be crashlooping.\n  VALUE = {{ $value }}"
 
   - alert: PrometheusAlertmanagerConfigurationReloadFailure
@@ -54,7 +54,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Prometheus AlertManager configuration reload failure (instance {{ $labels.hostname }})"
+      summary: "Prometheus AlertManager configuration reload failure (instance {{ $labels.instance }})"
       description: "AlertManager configuration reload error\n  VALUE = {{ $value }}"
 
   - alert: PrometheusAlertmanagerConfigNotSynced
@@ -63,7 +63,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Prometheus AlertManager config not synced (instance {{ $labels.hostname }})"
+      summary: "Prometheus AlertManager config not synced (instance {{ $labels.instance }})"
       description: "Configurations of AlertManager cluster instances are out of sync\n  VALUE = {{ $value }}"
 
   # - alert: PrometheusAlertmanagerE2eDeadManSwitch
@@ -72,7 +72,7 @@ groups:
   #   labels:
   #     severity: critical
   #   annotations:
-  #     summary: "Prometheus AlertManager E2E dead man switch (instance {{ $labels.hostname }})"
+  #     summary: "Prometheus AlertManager E2E dead man switch (instance {{ $labels.instance }})"
   #     description: "Prometheus DeadManSwitch is an always-firing alert. It's used as an end-to-end test of Prometheus through the Alertmanager.\n  VALUE = {{ $value }}"
 
   - alert: PrometheusNotConnectedToAlertmanager
@@ -81,7 +81,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus not connected to alertmanager (instance {{ $labels.hostname }})"
+      summary: "Prometheus not connected to alertmanager (instance {{ $labels.instance }})"
       description: "Prometheus cannot connect the alertmanager\n  VALUE = {{ $value }}"
 
   - alert: PrometheusRuleEvaluationFailures
@@ -90,7 +90,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus rule evaluation failures (instance {{ $labels.hostname }})"
+      summary: "Prometheus rule evaluation failures (instance {{ $labels.instance }})"
       description: "Prometheus encountered {{ $value }} rule evaluation failures, leading to potentially ignored alerts.\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTemplateTextExpansionFailures
@@ -99,7 +99,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus template text expansion failures (instance {{ $labels.hostname }})"
+      summary: "Prometheus template text expansion failures (instance {{ $labels.instance }})"
       description: "Prometheus encountered {{ $value }} template text expansion failures\n  VALUE = {{ $value }}"
 
   - alert: PrometheusRuleEvaluationSlow
@@ -108,7 +108,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Prometheus rule evaluation slow (instance {{ $labels.hostname }})"
+      summary: "Prometheus rule evaluation slow (instance {{ $labels.instance }})"
       description: "Prometheus rule evaluation took more time than the scheduled interval. I indicates a slower storage backend access or too complex query.\n  VALUE = {{ $value }}"
 
   - alert: PrometheusNotificationsBacklog
@@ -117,7 +117,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Prometheus notifications backlog (instance {{ $labels.hostname }})"
+      summary: "Prometheus notifications backlog (instance {{ $labels.instance }})"
       description: "The Prometheus notification queue has not been empty for 10 minutes\n  VALUE = {{ $value }}"
 
   - alert: PrometheusAlertmanagerNotificationFailing
@@ -135,7 +135,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus target empty (instance {{ $labels.hostname }})"
+      summary: "Prometheus target empty (instance {{ $labels.instance }})"
       description: "Prometheus has no target in service discovery\n  VALUE = {{ $value }}"
 
   # - alert: PrometheusTargetScrapingSlow
@@ -144,7 +144,7 @@ groups:
   #   labels:
   #     severity: warning
   #   annotations:
-  #     summary: "Prometheus target scraping slow (instance {{ $labels.hostname }})"
+  #     summary: "Prometheus target scraping slow (instance {{ $labels.instance }})"
   #     description: "Prometheus is scraping exporters slowly\n  VALUE = {{ $value }}"
 
   - alert: PrometheusLargeScrape
@@ -153,7 +153,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Prometheus large scrape (instance {{ $labels.hostname }})"
+      summary: "Prometheus large scrape (instance {{ $labels.instance }})"
       description: "Prometheus has many scrapes that exceed the sample limit\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTargetScrapeDuplicate
@@ -162,7 +162,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Prometheus target scrape duplicate (instance {{ $labels.hostname }})"
+      summary: "Prometheus target scrape duplicate (instance {{ $labels.instance }})"
       description: "Prometheus has many samples rejected due to duplicate timestamps but different values\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTsdbCheckpointCreationFailures
@@ -171,7 +171,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus TSDB checkpoint creation failures (instance {{ $labels.hostname }})"
+      summary: "Prometheus TSDB checkpoint creation failures (instance {{ $labels.instance }})"
       description: "Prometheus encountered {{ $value }} checkpoint creation failures\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTsdbCheckpointDeletionFailures
@@ -180,7 +180,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus TSDB checkpoint deletion failures (instance {{ $labels.hostname }})"
+      summary: "Prometheus TSDB checkpoint deletion failures (instance {{ $labels.instance }})"
       description: "Prometheus encountered {{ $value }} checkpoint deletion failures\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTsdbCompactionsFailed
@@ -189,7 +189,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus TSDB compactions failed (instance {{ $labels.hostname }})"
+      summary: "Prometheus TSDB compactions failed (instance {{ $labels.instance }})"
       description: "Prometheus encountered {{ $value }} TSDB compactions failures\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTsdbHeadTruncationsFailed
@@ -198,7 +198,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus TSDB head truncations failed (instance {{ $labels.hostname }})"
+      summary: "Prometheus TSDB head truncations failed (instance {{ $labels.instance }})"
       description: "Prometheus encountered {{ $value }} TSDB head truncation failures\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTsdbReloadFailures
@@ -207,7 +207,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus TSDB reload failures (instance {{ $labels.hostname }})"
+      summary: "Prometheus TSDB reload failures (instance {{ $labels.instance }})"
       description: "Prometheus encountered {{ $value }} TSDB reload failures\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTsdbWalCorruptions
@@ -216,7 +216,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus TSDB WAL corruptions (instance {{ $labels.hostname }})"
+      summary: "Prometheus TSDB WAL corruptions (instance {{ $labels.instance }})"
       description: "Prometheus encountered {{ $value }} TSDB WAL corruptions\n  VALUE = {{ $value }}"
 
   - alert: PrometheusTsdbWalTruncationsFailed
@@ -225,7 +225,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Prometheus TSDB WAL truncations failed (instance {{ $labels.hostname }})"
+      summary: "Prometheus TSDB WAL truncations failed (instance {{ $labels.instance }})"
       description: "Prometheus encountered {{ $value }} TSDB WAL truncation failures\n  VALUE = {{ $value }}"
 
 # node-expporter
@@ -237,7 +237,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host out of memory (instance {{ $labels.hostname }})"
+      summary: "Host out of memory (instance {{ $labels.instance }})"
       description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}"
 
   - alert: HostMemoryUnderMemoryPressure
@@ -246,7 +246,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host memory under memory pressure (instance {{ $labels.hostname }})"
+      summary: "Host memory under memory pressure (instance {{ $labels.instance }})"
       description: "The node is under heavy memory pressure. High rate of major page faults\n  VALUE = {{ $value }}"
 
   - alert: HostUnusualNetworkThroughputIn
@@ -255,7 +255,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host unusual network throughput in (instance {{ $labels.hostname }})"
+      summary: "Host unusual network throughput in (instance {{ $labels.instance }})"
       description: "Host network interfaces are probably receiving too much data (> 100 MB/s)\n  VALUE = {{ $value }}"
 
   - alert: HostUnusualNetworkThroughputOut
@@ -264,7 +264,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host unusual network throughput out (instance {{ $labels.hostname }})"
+      summary: "Host unusual network throughput out (instance {{ $labels.instance }})"
       description: "Host network interfaces are probably sending too much data (> 100 MB/s)\n  VALUE = {{ $value }}"
 
   - alert: HostUnusualDiskReadRate
@@ -273,7 +273,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host unusual disk read rate (instance {{ $labels.hostname }})"
+      summary: "Host unusual disk read rate (instance {{ $labels.instance }})"
       description: "Disk is probably reading too much data (> 50 MB/s)\n  DEVICE = {{ $labels.device }}\n  VALUE = {{ $value }}"
 
   - alert: HostUnusualDiskWriteRate
@@ -282,7 +282,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host unusual disk write rate (instance {{ $labels.hostname }})"
+      summary: "Host unusual disk write rate (instance {{ $labels.instance }})"
       description: "Disk is probably writing too much data (> 50 MB/s)\n  VALUE = {{ $value }}"
 
   # please add ignored mountpoints in node_exporter parameters like
@@ -293,7 +293,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host out of disk space (instance {{ $labels.hostname }})"
+      summary: "Host out of disk space (instance {{ $labels.instance }})"
       description: "Disk is almost full (< 10% left)\n  POINT= = {{ $labels.mountpoint }}\n  VALUE = {{ $value }}"
 
   - alert: HostDiskWillFillIn4Hours
@@ -302,7 +302,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host disk will fill in 4 hours (instance {{ $labels.hostname }})"
+      summary: "Host disk will fill in 4 hours (instance {{ $labels.instance }})"
       description: "Disk will fill in 4 hours at current write rate\n  VALUE = {{ $value }}"
 
   - alert: HostOutOfInodes
@@ -311,7 +311,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host out of inodes (instance {{ $labels.hostname }})"
+      summary: "Host out of inodes (instance {{ $labels.instance }})"
       description: "Disk is almost running out of available inodes (< 10% left)\n  VALUE = {{ $value }}"
 
   # - alert: HostUnusualDiskReadLatency
@@ -320,7 +320,7 @@ groups:
   #   labels:
   #     severity: warning
   #   annotations:
-  #     summary: "Host unusual disk read latency (instance {{ $labels.hostname }})"
+  #     summary: "Host unusual disk read latency (instance {{ $labels.instance }})"
   #     description: "Disk latency is growing (read operations > 100ms)\n  VALUE = {{ $value }}"
 
   - alert: HostUnusualDiskWriteLatency
@@ -329,7 +329,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host unusual disk write latency (instance {{ $labels.hostname }})"
+      summary: "Host unusual disk write latency (instance {{ $labels.instance }})"
       description: "Disk latency is growing (write operations > 100ms)\n  VALUE = {{ $value }}"
 
   - alert: HostHighCpuLoad
@@ -338,7 +338,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host high CPU load (instance {{ $labels.hostname }})"
+      summary: "Host high CPU load (instance {{ $labels.instance }})"
       description: "CPU load is > 80%\n  VALUE = {{ $value }}"
 
   # 1000 context switches is an arbitrary number.
@@ -350,7 +350,7 @@ groups:
   #   labels:
   #     severity: warning
   #   annotations:
-  #     summary: "Host context switching (instance {{ $labels.hostname }})"
+  #     summary: "Host context switching (instance {{ $labels.instance }})"
   #     description: "Context switching is growing on node (> 1000 / s)\n  VALUE = {{ $value }}"
 
   # - alert: HostSwapIsFillingUp
@@ -359,7 +359,7 @@ groups:
   #   labels:
   #     severity: warning
   #   annotations:
-  #     summary: "Host swap is filling up (instance {{ $labels.hostname }})"
+  #     summary: "Host swap is filling up (instance {{ $labels.instance }})"
   #     description: "Swap is filling up (>80%)\n  VALUE = {{ $value }}"
 
   - alert: HostSystemdServiceCrashed
@@ -368,7 +368,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host SystemD service crashed (instance {{ $labels.hostname }})"
+      summary: "Host SystemD service crashed (instance {{ $labels.instance }})"
       description: "SystemD service crashed\n  VALUE = {{ $value }}"
 
   - alert: HostPhysicalComponentTooHot
@@ -377,7 +377,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host physical component too hot (instance {{ $labels.hostname }})"
+      summary: "Host physical component too hot (instance {{ $labels.instance }})"
       description: "Physical hardware component too hot\n  VALUE = {{ $value }}"
 
   - alert: HostNodeOvertemperatureAlarm
@@ -386,7 +386,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Host node overtemperature alarm (instance {{ $labels.hostname }})"
+      summary: "Host node overtemperature alarm (instance {{ $labels.instance }})"
       description: "Physical node temperature alarm triggered\n  VALUE = {{ $value }}"
 
   - alert: HostRaidArrayGotInactive
@@ -395,7 +395,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Host RAID array got inactive (instance {{ $labels.hostname }})"
+      summary: "Host RAID array got inactive (instance {{ $labels.instance }})"
       description: "RAID array {{ $labels.device }} is in degraded state due to one or more disks failures. Number of spare drives is insufficient to fix issue automatically.\n  VALUE = {{ $value }}"
 
   - alert: HostRaidDiskFailure
@@ -404,8 +404,8 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host RAID disk failure (instance {{ $labels.hostname }})"
-      description: "At least one device in RAID array on {{ $labels.hostname }} failed. Array {{ $labels.md_device }} needs attention and possibly a disk swap\n  VALUE = {{ $value }}"
+      summary: "Host RAID disk failure (instance {{ $labels.instance }})"
+      description: "At least one device in RAID array on {{ $labels.instance }} failed. Array {{ $labels.md_device }} needs attention and possibly a disk swap\n  VALUE = {{ $value }}"
 
   # - alert: HostKernelVersionDeviations
   #   expr: count(sum(label_replace(node_uname_info, "kernel", "$1", "release", "([0-9]+.[0-9]+.[0-9]+).*")) by (kernel)) > 1
@@ -413,7 +413,7 @@ groups:
   #   labels:
   #     severity: warning
   #   annotations:
-  #     summary: "Host kernel version deviations (instance {{ $labels.hostname }})"
+  #     summary: "Host kernel version deviations (instance {{ $labels.instance }})"
   #     description: "Different kernel versions are running\n  VALUE = {{ $value }}"
 
   - alert: HostOomKillDetected
@@ -422,7 +422,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host OOM kill detected (instance {{ $labels.hostname }})"
+      summary: "Host OOM kill detected (instance {{ $labels.instance }})"
       description: "OOM kill detected\n  VALUE = {{ $value }}"
 
   - alert: HostEdacCorrectableErrorsDetected
@@ -431,8 +431,8 @@ groups:
     labels:
       severity: info
     annotations:
-      summary: "Host EDAC Correctable Errors detected (instance {{ $labels.hostname }})"
-      description: '{{ $labels.hostname }} has had {{ printf "%.0f" $value }} correctable memory errors reported by EDAC in the last 5 minutes.\n  VALUE = {{ $value }}'
+      summary: "Host EDAC Correctable Errors detected (instance {{ $labels.instance }})"
+      description: '{{ $labels.instance }} has had {{ printf "%.0f" $value }} correctable memory errors reported by EDAC in the last 5 minutes.\n  VALUE = {{ $value }}'
 
   - alert: HostEdacUncorrectableErrorsDetected
     expr: node_edac_uncorrectable_errors_total > 0
@@ -440,8 +440,8 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host EDAC Uncorrectable Errors detected (instance {{ $labels.hostname }})"
-      description: '{{ $labels.hostname }} has had {{ printf "%.0f" $value }} uncorrectable memory errors reported by EDAC in the last 5 minutes.\n  VALUE = {{ $value }}'
+      summary: "Host EDAC Uncorrectable Errors detected (instance {{ $labels.instance }})"
+      description: '{{ $labels.instance }} has had {{ printf "%.0f" $value }} uncorrectable memory errors reported by EDAC in the last 5 minutes.\n  VALUE = {{ $value }}'
 
   # - alert: HostNetworkReceiveErrors
   #   expr: increase(node_network_receive_errs_total[5m]) > 0
@@ -449,8 +449,8 @@ groups:
   #   labels:
   #     severity: warning
   #   annotations:
-  #     summary: "Host Network Receive Errors (instance {{ $labels.hostname }})"
-  #     description: '{{ $labels.hostname }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} receive errors in the last five minutes.\n  VALUE = {{ $value }}'
+  #     summary: "Host Network Receive Errors (instance {{ $labels.instance }})"
+  #     description: '{{ $labels.instance }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} receive errors in the last five minutes.\n  VALUE = {{ $value }}'
 
   - alert: HostNetworkTransmitErrors
     expr: increase(node_network_transmit_errs_total[5m]) > 0
@@ -458,8 +458,8 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host Network Transmit Errors (instance {{ $labels.hostname }})"
-      description: '{{ $labels.hostname }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} transmit errors in the last five minutes.\n  VALUE = {{ $value }}'
+      summary: "Host Network Transmit Errors (instance {{ $labels.instance }})"
+      description: '{{ $labels.instance }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} transmit errors in the last five minutes.\n  VALUE = {{ $value }}'
 
   - alert: HostNetworkInterfaceSaturated
     expr: (rate(node_network_receive_bytes_total{device!~"^tap.*"}[1m]) + rate(node_network_transmit_bytes_total{device!~"^tap.*"}[1m])) / node_network_speed_bytes{device!~"^tap.*"} > 0.8
@@ -467,8 +467,8 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Host Network Interface Saturated (instance {{ $labels.hostname }})"
-      description: 'The network interface "{{ $labels.interface }}" on "{{ $labels.hostname }}" is getting overloaded.\n  VALUE = {{ $value }}'
+      summary: "Host Network Interface Saturated (instance {{ $labels.instance }})"
+      description: 'The network interface "{{ $labels.interface }}" on "{{ $labels.instance }}" is getting overloaded.\n  VALUE = {{ $value }}'
 
 # blackbox-exporter
 - name: Blackbox
@@ -479,7 +479,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Blackbox probe failed (instance {{ $labels.hostname }})"
+      summary: "Blackbox probe failed (instance {{ $labels.instance }})"
       description: "Probe failed\n  VALUE = {{ $value }}"
 
   - alert: BlackboxSlowProbe
@@ -488,7 +488,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Blackbox slow probe (instance {{ $labels.hostname }})"
+      summary: "Blackbox slow probe (instance {{ $labels.instance }})"
       description: "Blackbox probe took more than 1s to complete\n  VALUE = {{ $value }}"
 
   - alert: BlackboxProbeHttpFailure
@@ -497,7 +497,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Blackbox probe HTTP failure (instance {{ $labels.hostname }})"
+      summary: "Blackbox probe HTTP failure (instance {{ $labels.instance }})"
       description: "HTTP status code is not 200-399\n  VALUE = {{ $value }}"
 
   - alert: BlackboxSslCertificateWillExpireSoon
@@ -506,7 +506,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Blackbox SSL certificate will expire soon (instance {{ $labels.hostname }})"
+      summary: "Blackbox SSL certificate will expire soon (instance {{ $labels.instance }})"
       description: "SSL certificate expires in 30 days\n  VALUE = {{ $value }}"
 
   - alert: BlackboxSslCertificateWillExpireSoon
@@ -515,7 +515,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Blackbox SSL certificate will expire soon (instance {{ $labels.hostname }})"
+      summary: "Blackbox SSL certificate will expire soon (instance {{ $labels.instance }})"
       description: "SSL certificate expires in 3 days\n  VALUE = {{ $value }}"
 
   - alert: BlackboxSslCertificateExpired
@@ -524,7 +524,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Blackbox SSL certificate expired (instance {{ $labels.hostname }})"
+      summary: "Blackbox SSL certificate expired (instance {{ $labels.instance }})"
       description: "SSL certificate has expired already\n  VALUE = {{ $value }}"
 
   - alert: BlackboxProbeSlowHttp
@@ -533,7 +533,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Blackbox probe slow HTTP (instance {{ $labels.hostname }})"
+      summary: "Blackbox probe slow HTTP (instance {{ $labels.instance }})"
       description: "HTTP request took more than 1s\n  VALUE = {{ $value }}"
 
   - alert: BlackboxProbeSlowPing
@@ -542,7 +542,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Blackbox probe slow ping (instance {{ $labels.hostname }})"
+      summary: "Blackbox probe slow ping (instance {{ $labels.instance }})"
       description: "Blackbox ping took more than 1s\n  VALUE = {{ $value }}"
 
 # prometheus/mysqld_exporter
@@ -554,8 +554,8 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "MySQL down (instance {{ $labels.hostname }})"
-      description: "MySQL instance is down on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+      summary: "MySQL down (instance {{ $labels.instance }})"
+      description: "MySQL instance is down on {{ $labels.instance }}\n  VALUE = {{ $value }}"
 
   - alert: MysqlTooManyConnections
     expr: avg by (instance,hostname) (max_over_time(mysql_global_status_threads_connected[5m])) / avg by (instance,hostname) (mysql_global_variables_max_connections) * 100 > 80
@@ -563,8 +563,8 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "MySQL too many connections (instance {{ $labels.hostname }})"
-      description: "More than 80% of MySQL connections are in use on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+      summary: "MySQL too many connections (instance {{ $labels.instance }})"
+      description: "More than 80% of MySQL connections are in use on {{ $labels.instance }}\n  VALUE = {{ $value }}"
 
   - alert: MysqlHighThreadsRunning
     expr: avg by (instance,hostname) (max_over_time(mysql_global_status_threads_running[5m])) / avg by (instance,hostname) (mysql_global_variables_max_connections) * 100 > 60
@@ -572,8 +572,8 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "MySQL high threads running (instance {{ $labels.hostname }})"
-      description: "More than 60% of MySQL connections are in running state on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+      summary: "MySQL high threads running (instance {{ $labels.instance }})"
+      description: "More than 60% of MySQL connections are in running state on {{ $labels.instance }}\n  VALUE = {{ $value }}"
 
   - alert: MysqlSlaveIoThreadNotRunning
     expr: mysql_slave_status_master_server_id > 0 and ON (instance,hostname) mysql_slave_status_slave_io_running == 0
@@ -581,8 +581,8 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "MySQL Slave IO thread not running (instance {{ $labels.hostname }})"
-      description: "MySQL Slave IO thread not running on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+      summary: "MySQL Slave IO thread not running (instance {{ $labels.instance }})"
+      description: "MySQL Slave IO thread not running on {{ $labels.instance }}\n  VALUE = {{ $value }}"
 
   - alert: MysqlSlaveSqlThreadNotRunning
     expr: mysql_slave_status_master_server_id > 0 and ON (instance,hostname) mysql_slave_status_slave_sql_running == 0
@@ -590,8 +590,8 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "MySQL Slave SQL thread not running (instance {{ $labels.hostname }})"
-      description: "MySQL Slave SQL thread not running on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+      summary: "MySQL Slave SQL thread not running (instance {{ $labels.instance }})"
+      description: "MySQL Slave SQL thread not running on {{ $labels.instance }}\n  VALUE = {{ $value }}"
 
   - alert: MysqlSlaveReplicationLag
     expr: mysql_slave_status_master_server_id > 0 and ON (instance,hostname) (mysql_slave_status_seconds_behind_master - mysql_slave_status_sql_delay) > 300
@@ -599,8 +599,8 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "MySQL Slave replication lag (instance {{ $labels.hostname }})"
-      description: "MysqL replication lag on {{ $labels.hostname }}\n  VALUE = {{ $value }}"
+      summary: "MySQL Slave replication lag (instance {{ $labels.instance }})"
+      description: "MysqL replication lag on {{ $labels.instance }}\n  VALUE = {{ $value }}"
 
   - alert: MysqlSlowQueries
     expr: rate(mysql_global_status_slow_queries[2m]) > 0
@@ -608,7 +608,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "MySQL slow queries (instance {{ $labels.hostname }})"
+      summary: "MySQL slow queries (instance {{ $labels.instance }})"
       description: "MySQL server mysql has some new slow query.\n  VALUE = {{ $value }}"
 
   - alert: MysqlRestarted
@@ -617,8 +617,8 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "MySQL restarted (instance {{ $labels.hostname }})"
-      description: "MySQL has just been restarted, less than one minute ago on {{ $labels.hostname }}.\n  VALUE = {{ $value }}"
+      summary: "MySQL restarted (instance {{ $labels.instance }})"
+      description: "MySQL has just been restarted, less than one minute ago on {{ $labels.instance }}.\n  VALUE = {{ $value }}"
 
   - alert: KafkaTopicsReplicas
     expr: sum(kafka_topic_partition_in_sync_replica) by (topic) < 3
@@ -626,7 +626,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Kafka topics replicas (instance {{ $labels.hostname }})"
+      summary: "Kafka topics replicas (instance {{ $labels.instance }})"
       description: "Kafka topic in-sync partition\n  VALUE = {{ $value }}"
 
   - alert: KafkaConsumersGroup
@@ -635,7 +635,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Kafka consumers group (instance {{ $labels.hostname }})"
+      summary: "Kafka consumers group (instance {{ $labels.instance }})"
       description: "Kafka consumers group\n  VALUE = {{ $value }}"
 
 
@@ -648,7 +648,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Redis down (instance {{ $labels.hostname }})"
+      summary: "Redis down (instance {{ $labels.instance }})"
       description: "Redis instance is down\n  VALUE = {{ $value }}"
 
   - alert: RedisMissingMaster
@@ -657,7 +657,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Redis missing master (instance {{ $labels.hostname }})"
+      summary: "Redis missing master (instance {{ $labels.instance }})"
       description: "Redis cluster has no node marked as master.\n  VALUE = {{ $value }}"
 
   - alert: RedisTooManyMasters
@@ -666,7 +666,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Redis too many masters (instance {{ $labels.hostname }})"
+      summary: "Redis too many masters (instance {{ $labels.instance }})"
       description: "Redis cluster has too many nodes marked as master.\n  VALUE = {{ $value }}"
 
   - alert: RedisDisconnectedSlaves
@@ -675,7 +675,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Redis disconnected slaves (instance {{ $labels.hostname }})"
+      summary: "Redis disconnected slaves (instance {{ $labels.instance }})"
       description: "Redis not replicating for all slaves. Consider reviewing the redis replication status.\n  VALUE = {{ $value }}"
 
   - alert: RedisReplicationBroken
@@ -684,7 +684,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Redis replication broken (instance {{ $labels.hostname }})"
+      summary: "Redis replication broken (instance {{ $labels.instance }})"
       description: "Redis instance lost a slave\n  VALUE = {{ $value }}"
 
   - alert: RedisClusterFlapping
@@ -693,7 +693,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Redis cluster flapping (instance {{ $labels.hostname }})"
+      summary: "Redis cluster flapping (instance {{ $labels.instance }})"
       description: "Changes have been detected in Redis replica connection. This can occur when replica nodes lose connection to the master and reconnect (a.k.a flapping).\n  VALUE = {{ $value }}"
 
   # - alert: RedisMissingBackup
@@ -702,7 +702,7 @@ groups:
   #   labels:
   #     severity: critical
   #   annotations:
-  #     summary: "Redis missing backup (instance {{ $labels.hostname }})"
+  #     summary: "Redis missing backup (instance {{ $labels.instance }})"
   #     description: "Redis has not been backuped for 24 hours\n  VALUE = {{ $value }}"
 
   - alert: RedisOutOfMemory
@@ -711,7 +711,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Redis out of memory (instance {{ $labels.hostname }})"
+      summary: "Redis out of memory (instance {{ $labels.instance }})"
       description: "Redis is running out of memory (> 90%)\n  VALUE = {{ $value }}"
 
   - alert: RedisTooManyConnections
@@ -720,7 +720,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Redis too many connections (instance {{ $labels.hostname }})"
+      summary: "Redis too many connections (instance {{ $labels.instance }})"
       description: "Redis instance has too many connections\n  VALUE = {{ $value }}"
 
   - alert: RedisNotEnoughConnections
@@ -729,7 +729,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Redis not enough connections (instance {{ $labels.hostname }})"
+      summary: "Redis not enough connections (instance {{ $labels.instance }})"
       description: "Redis instance should have more connections (> 5)\n  VALUE = {{ $value }}"
 
   - alert: RedisRejectedConnections
@@ -738,7 +738,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Redis rejected connections (instance {{ $labels.hostname }})"
+      summary: "Redis rejected connections (instance {{ $labels.instance }})"
       description: "Some connections to Redis has been rejected\n  VALUE = {{ $value }}"
 
 # (official exporter) rabbitmq/rabbitmq-prometheus rabbitmq自身的prometheus插件
@@ -750,7 +750,7 @@ groups:
   #   labels:
   #     severity: critical
   #   annotations:
-  #     summary: "Rabbitmq node down (instance {{ $labels.hostname }})"
+  #     summary: "Rabbitmq node down (instance {{ $labels.instance }})"
   #     description: "Less than 3 nodes running in RabbitMQ cluster\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqNodeNotDistributed
@@ -759,7 +759,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Rabbitmq node not distributed (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq node not distributed (instance {{ $labels.instance }})"
       description: "Distribution link state is not 'up'\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqInstancesDifferentVersions
@@ -768,7 +768,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq instances different versions (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq instances different versions (instance {{ $labels.instance }})"
       description: "Running different version of Rabbitmq in the same cluster, can lead to failure.\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqMemoryHigh
@@ -777,7 +777,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq memory high (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq memory high (instance {{ $labels.instance }})"
       description: "A node use more than 90% of allocated RAM\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqFileDescriptorsUsage
@@ -786,7 +786,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq file descriptors usage (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq file descriptors usage (instance {{ $labels.instance }})"
       description: "A node use more than 90% of file descriptors\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqTooMuchUnack
@@ -795,7 +795,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq too much unack (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq too much unack (instance {{ $labels.instance }})"
       description: "Too much unacknowledged messages\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqTooMuchConnections
@@ -804,7 +804,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq too much connections (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq too much connections (instance {{ $labels.instance }})"
       description: "The total connections of a node is too high\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqNoQueueConsumer
@@ -813,7 +813,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq no queue consumer (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq no queue consumer (instance {{ $labels.instance }})"
       description: "A queue has less than 1 consumer\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqUnroutableMessages
@@ -822,7 +822,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq unroutable messages (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq unroutable messages (instance {{ $labels.instance }})"
       description: "A queue has unroutable messages\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqDown
@@ -831,7 +831,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Rabbitmq down (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq down (instance {{ $labels.instance }})"
       description: "RabbitMQ node down\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqClusterDown
@@ -840,7 +840,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Rabbitmq cluster down (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq cluster down (instance {{ $labels.instance }})"
       description: "Less than 3 nodes running in RabbitMQ cluster\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqClusterPartition
@@ -849,7 +849,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Rabbitmq cluster partition (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq cluster partition (instance {{ $labels.instance }})"
       description: "Cluster partition\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqOutOfMemory
@@ -858,7 +858,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq out of memory (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq out of memory (instance {{ $labels.instance }})"
       description: "Memory available for RabbmitMQ is low (< 10%)\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqTooManyConnections
@@ -867,7 +867,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq too many connections (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq too many connections (instance {{ $labels.instance }})"
       description: "RabbitMQ instance has too many connections (> 1000)\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqDeadLetterQueueFillingUp
@@ -876,7 +876,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Rabbitmq dead letter queue filling up (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq dead letter queue filling up (instance {{ $labels.instance }})"
       description: "Dead letter queue is filling up (> 10 msgs)\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqTooManyMessagesInQueue
@@ -885,7 +885,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq too many messages in queue (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq too many messages in queue (instance {{ $labels.instance }})"
       description: "Queue is filling up (> 1000 msgs)\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqSlowQueueConsuming
@@ -894,7 +894,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq slow queue consuming (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq slow queue consuming (instance {{ $labels.instance }})"
       description: "Queue messages are consumed slowly (> 60s)\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqNoConsumer
@@ -903,7 +903,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Rabbitmq no consumer (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq no consumer (instance {{ $labels.instance }})"
       description: "Queue has no consumer\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqTooManyConsumers
@@ -912,7 +912,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Rabbitmq too many consumers (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq too many consumers (instance {{ $labels.instance }})"
       description: "Queue should have only 100 consumer\n  VALUE = {{ $value }}"
 
   - alert: RabbitmqUnactiveExchange
@@ -921,7 +921,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Rabbitmq unactive exchange (instance {{ $labels.hostname }})"
+      summary: "Rabbitmq unactive exchange (instance {{ $labels.instance }})"
       description: "Exchange receive less than 5 msgs per second\n  VALUE = {{ $value }}"
 
 
@@ -934,7 +934,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Ceph State (instance {{ $labels.hostname }})"
+      summary: "Ceph State (instance {{ $labels.instance }})"
       description: "Ceph instance unhealthy\n  VALUE = {{ $value }}"
 
   - alert: CephMonitorClockSkew
@@ -943,7 +943,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Ceph monitor clock skew (instance {{ $labels.hostname }})"
+      summary: "Ceph monitor clock skew (instance {{ $labels.instance }})"
       description: "Ceph monitor clock skew detected. Please check ntp and hardware clock settings\n  VALUE = {{ $value }}"
 
   - alert: CephMonitorLowSpace
@@ -952,7 +952,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Ceph monitor low space (instance {{ $labels.hostname }})"
+      summary: "Ceph monitor low space (instance {{ $labels.instance }})"
       description: "Ceph monitor storage is low.\n  VALUE = {{ $value }}"
 
   - alert: CephOsdDown
@@ -961,7 +961,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Ceph OSD Down (instance {{ $labels.hostname }})"
+      summary: "Ceph OSD Down (instance {{ $labels.instance }})"
       description: "Ceph Object Storage Daemon Down\n  VALUE = {{ $value }}"
 
   - alert: CephHighOsdLatency
@@ -970,7 +970,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Ceph high OSD latency (instance {{ $labels.hostname }})"
+      summary: "Ceph high OSD latency (instance {{ $labels.instance }})"
       description: "Ceph Object Storage Daemon latetncy is high. Please check if it doesn't stuck in weird state.\n  VALUE = {{ $value }}"
 
   - alert: CephOsdLowSpace
@@ -979,7 +979,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Ceph OSD low space (instance {{ $labels.hostname }})"
+      summary: "Ceph OSD low space (instance {{ $labels.instance }})"
       description: "Ceph Object Storage Daemon is going out of space. Please add more disks.\n  VALUE = {{ $value }}"
 
   - alert: CephOsdReweighted
@@ -988,7 +988,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Ceph OSD reweighted (instance {{ $labels.hostname }})"
+      summary: "Ceph OSD reweighted (instance {{ $labels.instance }})"
       description: "Ceph Object Storage Daemon take ttoo much time to resize.\n  VALUE = {{ $value }}"
 
   - alert: CephPgDown
@@ -997,7 +997,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Ceph PG down (instance {{ $labels.hostname }})"
+      summary: "Ceph PG down (instance {{ $labels.instance }})"
       description: "Some Ceph placement groups are down. Please ensure that all the data are available.\n  VALUE = {{ $value }}"
 
   - alert: CephPgIncomplete
@@ -1006,7 +1006,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Ceph PG incomplete (instance {{ $labels.hostname }})"
+      summary: "Ceph PG incomplete (instance {{ $labels.instance }})"
       description: "Some Ceph placement groups are incomplete. Please ensure that all the data are available.\n  VALUE = {{ $value }}"
 
   - alert: CephPgInconsistant
@@ -1015,7 +1015,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Ceph PG inconsistant (instance {{ $labels.hostname }})"
+      summary: "Ceph PG inconsistant (instance {{ $labels.instance }})"
       description: "Some Ceph placement groups are inconsitent. Data is available but inconsistent across nodes.\n  VALUE = {{ $value }}"
 
   - alert: CephPgActivationLong
@@ -1024,7 +1024,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Ceph PG activation long (instance {{ $labels.hostname }})"
+      summary: "Ceph PG activation long (instance {{ $labels.instance }})"
       description: "Some Ceph placement groups are too long to activate.\n  VALUE = {{ $value }}"
 
   - alert: CephPgBackfillFull
@@ -1033,7 +1033,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Ceph PG backfill full (instance {{ $labels.hostname }})"
+      summary: "Ceph PG backfill full (instance {{ $labels.instance }})"
       description: "Some Ceph placement groups are located on full Object Storage Daemon on cluster. Those PGs can be unavailable shortly. Please check OSDs, change weight or reconfigure CRUSH rules.\n  VALUE = {{ $value }}"
 
   - alert: CephPgUnavailable
@@ -1042,7 +1042,7 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Ceph PG unavailable (instance {{ $labels.hostname }})"
+      summary: "Ceph PG unavailable (instance {{ $labels.instance }})"
       description: "Some Ceph placement groups are unavailable.\n  VALUE = {{ $value }}"
 
 # jenkins
@@ -1055,5 +1055,5 @@ groups:
       severity: warning
       item: build_status
     annotations:
-      summary: "Jenkins Job Failure (instance {{ $labels.hostname }})"
+      summary: "Jenkins Job Failure (instance {{ $labels.instance }})"
       description: "{{ $labels.jenkins_job }}"
