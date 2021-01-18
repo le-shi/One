@@ -62,13 +62,12 @@ wgetSet(){
 
 
 do_system_optimize(){
-    # 关闭selinux、停止firewalld、开启ipv4转发、调整tcp端口范围、调整系统文件打开句柄数、调整进程文件打开句柄数、单进程VMA限制
-    # 调整用户进程打开数(暂时不加)
+    # selinux、firewalld、ipv4转发、tcp端口范围、系统,用户,进程文件打开数、tcp接收(发送)缓存区大小、单进程VMA限制
     # [job name] exp: ev, cur: cv, res: success
     ## selinux
     info_un "[selinux] exp: Disabled, "
-    selinux_status=$(getenforce)
-    info_un2 "cur: ${selinux_status}, res: "
+    selinux_status=$(getenforce 2>/dev/null)
+    info_un2 "cur: ${selinux_status:--}, res: "
     if [[ ${selinux_status} == "Enforcing" ]]
     then
         setenforce 0
@@ -77,6 +76,8 @@ do_system_optimize(){
     elif [[ ${selinux_status} == "Disabled" ]]
     then
         info_nu "It is expected, not modified"
+    else
+        info_nu "selinux not found!"
     fi
 
     ## firewalld
@@ -124,7 +125,7 @@ do_system_optimize(){
         info_nu "It is expected, not modified"
     fi
 
-    ## 调整系统文件打开句柄数 as /proc/sys/fs/file-max
+    ## 调整系统可打开文件的最大数量 as /proc/sys/fs/file-max
     info_un "[fs.file-max] exp: 65536, "
     fs_file_max=$(sysctl -n fs.file-max)
     info_un2 "cur: ${fs_file_max}, res: "
@@ -136,7 +137,7 @@ do_system_optimize(){
         info_nu "It is expected, not modified"
     fi
 
-    ## 调整进程文件打开句柄数: ulimit -n
+    ## 调整用户可打开文件的最大数量: ulimit -n
     info_un "[ulimit -n] exp: 65535, "
     ulimit_n_status=$(ulimit -n)
     info_un2 "cur: ${ulimit_n_status}, res: "
@@ -148,6 +149,46 @@ do_system_optimize(){
             [[ $? == 0 ]] && info_nu2 "success, "
         fi
         info_nu "Reconnect to SSH and automatically load the ulimit"
+    else
+        info_nu "It is expected, not modified"
+    fi
+
+    ## 调整单个进程可打开文件的最大数量: /proc/sys/fs/nr_open
+    info_un "[fs.nr_open] exp: 65536, "
+    fs_file_max=$(sysctl -n fs.nr_open)
+    info_un2 "cur: ${fs_file_max}, res: "
+    if [[ "${fs_file_max}" -lt 65536 ]]
+    then
+        sysctl -w -q fs.nr_open=65536
+        [[ $? == 0 ]] && info_nu "success"
+    else
+        info_nu "It is expected, not modified"
+    fi
+
+    ## tcp接收缓存区大小,缓存从对端接收的数据,后续会被应用程序读取,单位是字节 as /proc/sys/net/ipv4/tcp_rmem
+    ### 最小(默认4K) 默认(默认87380字节) 最大(不会覆盖net.core.rmem_max)
+    info_un "[net.ipv4.tcp_rmem] exp: 4096 87380 6291456, "
+    net_ipv4_tcp_rmem=$(sysctl -n net.ipv4.tcp_rmem)
+    net_ipv4_tcp_rmem=$(echo ${net_ipv4_tcp_rmem} | tr "\t" " ")
+    info_un2 "cur: ${net_ipv4_tcp_rmem}, res: "
+    if [[ "${net_ipv4_tcp_rmem}" != "4096 87380 6291456" ]]
+    then
+        sysctl -w -q net.ipv4.tcp_rmem="4096 87380 6291456"
+        [[ $? == 0 ]] && info_nu "success"
+    else
+        info_nu "It is expected, not modified"
+    fi
+
+    ## tcp发送缓存区大小,缓存应用程序的数据,有序列号被应答确认的数据会从发送缓冲区删除掉,单位是字节 as /proc/sys/net/ipv4/tcp_wmem
+    ### 最小(默认4K) 默认(最大16K,自动调整) 最大(不会覆盖net.core.wmem_max)
+    info_un "[net.ipv4.tcp_wmem] exp: 4096 16384 4194304, "
+    net_ipv4_tcp_wmem=$(sysctl -n net.ipv4.tcp_wmem)
+    net_ipv4_tcp_wmem=$(echo ${net_ipv4_tcp_wmem} | tr "\t" " ")
+    info_un2 "cur: ${net_ipv4_tcp_wmem}, res: "
+    if [[ "${net_ipv4_tcp_wmem}" != "4096 16384 4194304" ]]
+    then
+        sysctl -w -q net.ipv4.tcp_wmem="4096 16384 4194304"
+        [[ $? == 0 ]] && info_nu "success"
     else
         info_nu "It is expected, not modified"
     fi

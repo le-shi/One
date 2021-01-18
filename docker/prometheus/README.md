@@ -31,10 +31,11 @@
 ---
 1. 规则,exporter,GDI(Grafana Dashboard Id)
    1. jvm([prometheus/jmx_exporter](https://github.com/prometheus/jmx_exporter))-[4701]
-   2. openstack([niedbalski/openstack-exporter-linux-amd64](https://quay.io/niedbalski/openstack-exporter-linux-amd64))-[7924]
+   2. openstack([niedbalski/openstack-exporter-linux-amd64](https://quay.io/niedbalski/openstack-exporter-linux-amd64))-[9701]
    3. zipkin([zipkin内置的prometheus接口](https://github.com/le-shi/docker-zipkin))-[1598]
    4. harbor([zhangguanzhang/harbor_exporter](https://hub.docker.com/r/zhangguanzhang/harbor_exporter))
    5. docker([google/cadvisor](https://hub.docker.com/r/google/cadvisor))
+   6. kubernetes-[13105]
 2. PromQL如何使用
 3. Alert告警规则如何配置
 4. Grafana图表如何配置

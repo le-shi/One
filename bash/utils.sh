@@ -47,6 +47,16 @@ judgeDirectory (){
   [[ -d ${dName} ]] || mkdir -pv ${dName}
 }
 
+judgeCommandRename (){
+  # 判断rename命令的版本: C & Perl
+  local rename_version=$(rename --version)
+  if [[ $(echo ${rename_version} | grep 'util-linux') ]];then
+      rename -v ${new_text} ${old_text} ${new_text}.file1 ${new_text}.file2
+  else
+      rename -v "s/${new_text}/${old_text}/g" ${new_text}.file1 ${new_text}.file2
+  fi
+}
+
 checkServer (){
  if type "${1}" > /dev/null 2>&1;then :;else "${2}";fi
  #Use: checkServer go centosInstallGo
