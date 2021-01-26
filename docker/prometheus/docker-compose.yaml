@@ -12,7 +12,7 @@ services:
     restart: always
     ports:
       - "9090:9090"
-    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus", "--web.console.libraries=/usr/share/prometheus/console_libraries", "--web.console.templates=/usr/share/prometheus/consoles", "--web.enable-lifecycle"]
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus", "--storage.tsdb.retention.time=15y", "--web.console.libraries=/usr/share/prometheus/console_libraries", "--web.console.templates=/usr/share/prometheus/consoles", "--web.enable-lifecycle"]
     volumes:
       - "./volume/prometheus/data:/prometheus"
       - "./volume/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml"

@@ -24,8 +24,8 @@
 3. 修改配置，没有则添加-application.properties
 
     ```properties
-    # 暴露prometheus端点
-    management.endpoints.web.exposure.include=prometheus
+    # 暴露prometheus端点(默认开启health,info;添加prometheus之前确认之前的运行状态不会受到影响)
+    management.endpoints.web.exposure.include=health,info,prometheus
     # 添加tag，application为当前服务名
     management.metrics.tags.application=${spring.application.name}
     # 开启Tomcat的MBean指标注册
