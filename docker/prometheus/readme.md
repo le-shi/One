@@ -17,6 +17,8 @@
    7. rabbitmq([rabbitmq的prometheus插件,3.8.9之后自动开启(15692)](https://www.rabbitmq.com/prometheus.html))-[10991]
    8. ceph([ceph的prometheus模块,需手动开启(9283)](https://docs.ceph.com/en/latest/mgr/prometheus/))-[2842]
    9. jenkins([jenkins的prometheus插件,需手动安装(8080/prometheus)](https://plugins.jenkins.io/prometheus/))-[9524]
+   10. jvm/eureka([MavenPlugin](./docs/jvm.md))-[4701]
+
 
 5.  关于报警时间的问题
     1.  Prometheus 告警自定义模板的默认使用的是`UTC`时间
@@ -30,12 +32,11 @@
 下一步:
 ---
 1. 规则,exporter,GDI(Grafana Dashboard Id)
-   1. jvm([prometheus/jmx_exporter](https://github.com/prometheus/jmx_exporter))-[4701]
-   2. openstack([niedbalski/openstack-exporter-linux-amd64](https://quay.io/niedbalski/openstack-exporter-linux-amd64))-[9701]
-   3. zipkin([zipkin内置的prometheus接口](https://github.com/le-shi/docker-zipkin))-[1598]
-   4. harbor([zhangguanzhang/harbor_exporter](https://hub.docker.com/r/zhangguanzhang/harbor_exporter))
-   5. docker([google/cadvisor](https://hub.docker.com/r/google/cadvisor))
-   6. kubernetes-[13105]
+   1. openstack([niedbalski/openstack-exporter-linux-amd64](https://quay.io/niedbalski/openstack-exporter-linux-amd64))-[9701]
+   2. zipkin([zipkin内置的prometheus接口](https://github.com/le-shi/docker-zipkin))-[1598]
+   3. harbor([zhangguanzhang/harbor_exporter](https://hub.docker.com/r/zhangguanzhang/harbor_exporter))
+   4. docker([google/cadvisor](https://hub.docker.com/r/google/cadvisor))
+   5. kubernetes-[13105]
 2. PromQL如何使用
 3. Alert告警规则如何配置
 4. Grafana图表如何配置

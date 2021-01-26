@@ -44,13 +44,22 @@ scrape_configs:
         labels:
           hostname: 'zipkin'
           type: zipkin
-  # etcd
-  - job_name: 'etcd'
-    scheme: https
-    tls_config:
-        insecure_skip_verify: true
-    static_configs:
-      - targets: ['etcd1:2379','etcd2:2379','etcd3:2379']
+  # # Eureka - jvm
+  # - job_name: 'jvm'
+  #   eureka_sd_configs:
+  #     - server: http://ip:8761/eureka
+  #   relabel_configs:
+  #     - source_labels: [__meta_eureka_app_instance_metadata_prometheus_path]
+  #       action: replace
+  #       target_label: __metrics_path__
+  #       regex: (.+)
+  # # etcd
+  # - job_name: 'etcd'
+  #   scheme: https
+  #   tls_config:
+  #       insecure_skip_verify: true
+  #   static_configs:
+  #     - targets: ['etcd1:2379','etcd2:2379','etcd3:2379']
   # blackbox
   - job_name: 'box_http_2xx'
     scrape_interval: 2m
