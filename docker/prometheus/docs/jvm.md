@@ -42,12 +42,12 @@
         ```xml
         <dependencies>
         ...
-        <!-- https://mvnrepository.com/artifact/io.github.mweirauch/micrometer-jvm-extras -->
-        <dependency>
-            <groupId>io.github.mweirauch</groupId>
-            <artifactId>micrometer-jvm-extras</artifactId>
-            <version>0.2.1</version>
-        </dependency>
+            <!-- https://mvnrepository.com/artifact/io.github.mweirauch/micrometer-jvm-extras -->
+            <dependency>
+                <groupId>io.github.mweirauch</groupId>
+                <artifactId>micrometer-jvm-extras</artifactId>
+                <version>0.2.1</version>
+            </dependency>
         ...
         </dependencies>
         ```
