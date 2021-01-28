@@ -91,13 +91,14 @@
               regex: (.+)
         ```
 
-   2. 单个发现
+   2. 静态目标
 
         ```yaml
         - job_name: 'jvm'
           metrics_path: '/actuator/prometheus'
           static_configs:
-            - targets: ['ip:port']
+            - targets: ['ip1:port1']
+            - targets: ['ip2:port2']
         ```
 
 7. 展示在Grafana, ID: `4701`

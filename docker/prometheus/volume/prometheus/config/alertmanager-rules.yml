@@ -1061,14 +1061,14 @@ groups:
 # jvm
 - name: jvm
   rules:
-  - alert: JvmLogEventsError
-    expr: increase(logback_events_total{level="error"}[10m]) > 0
-    for: 10m
+  - alert: JvmErrorLogEvents
+    expr: increase(logback_events_total{level="error"}[3m]) > 0
+    for: 5m
     labels:
       severity: critical
     annotations:
-      summary: "JVM log events error (instance {{ $labels.instance }})"
-      description: "The JVM error log event is out of limit (> 0)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+      summary: "JVM error log events  (instance {{ $labels.instance }})"
+      description: "The JVM error log event is out of limit (> 0)\n  VALUE = {{ $value }}\n  APPLICATION: {{ $labels.application }}"
 
   - alert: JvmMemoryFillingUp
     expr: (sum by (instance)(jvm_memory_used_bytes{area="heap"}) / sum by (instance)(jvm_memory_max_bytes{area="heap"})) * 100 > 80
@@ -1077,4 +1077,4 @@ groups:
       severity: warning
     annotations:
       summary: "JVM memory filling up (instance {{ $labels.instance }})"
-      description: "JVM memory is filling up (> 80%)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+      description: "JVM memory is filling up (> 80%)\n  VALUE = {{ $value }}\n  APPLICATION: {{ $labels.application }}"
