@@ -14,6 +14,7 @@
 ---
 [我的Hub](https://github.com/le-shi) | [我的笔记](https://github.com/le-shi/One/tree/master/blogs) | [我的简书](https://www.jianshu.com/u/e5a52550a07a)
 
+<!-- <kbd>Enter</kbd> -->
 
 <!-- **configue**
 
@@ -21,7 +22,6 @@
 |-|-|
 |xshell5-XTerm.xcs| color XTerm|
 |*.ssf|搜狗输入法皮肤|
-
 
 |1|2|
 |-|-|
@@ -42,16 +42,20 @@
 |strace|程序调试工具|
 |tcpdump|linux抓包| -->
 
-**树莓派**
+## 树莓派
+
 * [x] 树莓派🥧
 * [ ] 猫的 - 自动铲屎😏
 * [ ] 猫的 - 自动续粮、续水💧
 * [ ] 猫的 - 自动逗猫🐱
 * [ ] 我的 - 控制开关灯💡
 
-
 ---
 [emoji:+1:](https://www.webfx.com/tools/emoji-cheat-sheet/)
+
+```emoji
+:+1:
+```
 
 :bowtie:
 :smile:
