@@ -1,25 +1,30 @@
-#### 守护进行模式 Or docker异步设置
+# Fluentd
+
+## Not verify
+
+### 守护进行模式 Or docker异步设置
+
 我想在容器中以流畅的方式聚合容器日志。要自动使用流畅的日志驱动程序，我可以使用该选项启动de docker守护程序
 
 --log-driver=fluentd --log-opt fluentd-async-connect=true
 
-#### 使用fluentd收集docker的日志-内有fluentd-docker异步设置链接
+### 使用fluentd收集docker的日志-内有fluentd-docker异步设置链接
 
-http://www.imekaku.com/2016/09/08/docker-log-fluentd/
+<http://www.imekaku.com/2016/09/08/docker-log-fluentd/>
 
-https://segmentfault.com/a/1190000000730444
+<https://segmentfault.com/a/1190000000730444>
 
-#### Github Fluentd-conf
+### Github Fluentd-conf
 
-https://github.com/fluent/fluentd/blob/master/fluent.conf
+<https://github.com/fluent/fluentd/blob/master/fluent.conf>
 
-#### a file generator that renders templates using docker container meta-data.
+### a file generator that renders templates using docker container meta-data.
 
-https://github.com/jwilder/docker-gen
+<https://github.com/jwilder/docker-gen>
 
-#### docker-gen fluentd模板
+### docker-gen fluentd模板
 
-https://github.com/jwilder/docker-gen/blob/master/templates/fluentd.conf.tmpl
+<https://github.com/jwilder/docker-gen/blob/master/templates/fluentd.conf.tmpl>
 
 ---
 

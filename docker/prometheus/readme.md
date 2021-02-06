@@ -40,7 +40,7 @@
    4. docker([google/cadvisor](https://hub.docker.com/r/google/cadvisor))
    5. kubernetes-[13105]
    6. ingress-nginx([参考](https://github.com/kubernetes/ingress-nginx/tree/master/deploy/prometheus))-[9614]
-   7. nginx
+   7. nginx-log-[13841]
    8. elasticsearch([justwatchcom/elasticsearch_exporter](https://github.com/justwatchcom/elasticsearch_exporter))-[6483]
 2. PromQL如何使用
 3. Alert告警规则如何配置
