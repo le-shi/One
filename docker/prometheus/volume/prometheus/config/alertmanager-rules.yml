@@ -1062,7 +1062,7 @@ groups:
 - name: jvm
   rules:
   - alert: JvmErrorLogEvents
-    expr: increase(logback_events_total{level="error"}[5m]) > 0
+    expr: increase(logback_events_total{level="error"}[3m]) > 0
     for: 3m
     labels:
       severity: critical
