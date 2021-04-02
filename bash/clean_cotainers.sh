@@ -20,6 +20,7 @@ do
 	sleep ${st}
 done
 
+cd $(dirname $0)
 file_size=$(ls -s ${log_name})
 file_rotate_date=$(date +%F_%H.%M.%S)
 # 文件大于100M，做切割处理
