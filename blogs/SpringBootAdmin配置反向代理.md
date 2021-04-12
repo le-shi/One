@@ -21,7 +21,10 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_redirect ~^http://([^:]+)(:\d+)?(.*)$ https://$1:$server_port/stats$3;
+        # http
+        # proxy_redirect ~^http://([^:]+)(:\d+)?(.*)$ http://$1/stats$3;
+        # https
+        # proxy_redirect ~^http://([^:]+)(:\d+)?(.*)$ https://$1:$server_port/stats$3;
     }
 ...
 }

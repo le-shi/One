@@ -3,15 +3,15 @@
 DUMP_DAY=$(date +%F_%H_%M_%S)
 DUMP_TIME=${DUMP_DAY}
 # 定义网络名称
-NETWORK_NAME=zbx
+NETWORK_NAME=db_network
 # 定义镜像
-IMAGE_NAME=cr.zbxsoft.com/3rd/mysql:5.7.30
+IMAGE_NAME=mysql:5.7.30
 # 定义容器名称
 CONTAINER_NAME=(mysql)
 # 定义备份数据库的密码
 CONTAINER_MYSQL_ROOT_PASSWORD=5tgb^YHN
 # 定义保存目录路径
-DUMP_DIRECTORY=/home/volume/mysql_backup
+DUMP_DIRECTORY=/home/volume/mysql/backup
 # 定义脚本文件路径
 DUMP_SHELL=/tmp/dump.sh
 # 定义本地备份历史保留时长(天)
@@ -23,7 +23,7 @@ BACKUP_KEEP_DAY=180
 ## --no-data 不要写任何表行信息（即，不要转储表内容）。如果只想转储CREATE TABLE表的语句（例如，通过加载转储文件来创建表的空副本），这将很有用
 ## --compact 产生更紧凑的输出
 ## --compatible=name 产生与其他数据库系统或更旧的MySQL服务器更兼容的输出. 值name可以是 ansi，mysql323， mysql40，postgresql， oracle，mssql， db2，maxdb， no_key_options， no_table_options，或 no_field_options。要使用多个值，请用逗号分隔。 此选项不保证与其他服务器的兼容性。它仅启用当前可用于使转储输出更兼容的那些SQL模式值。例如，--compatible=oracle不将数据类型映射到Oracle类型或不使用Oracle注释语法。
-COMMON_DUMP_CMD="/usr/bin/mysqldump -h ${co_name} -uroot -p\"${CONTAINER_MYSQL_ROOT_PASSWORD}\" --skip-lock-tables --hex-blob"
+COMMON_DUMP_CMD="/usr/bin/mysqldump -uroot -p\"${CONTAINER_MYSQL_ROOT_PASSWORD}\" --skip-lock-tables --hex-blob"
 
 # 检查网络是否存在
 if [ $(docker network ls | grep -c ${NETWORK_NAME}) == 0 ];then echo "network ${NETWORK_NAME} not exists";  exit;else  echo "network ${NETWORK_NAME} is Ok, In backup...";fi
@@ -45,12 +45,12 @@ dumpDatabase (){
     # 备份指定数据库数据
     dump)
       echo "Dump: ${da_name}"
-      echo "${COMMON_DUMP_CMD} ${da_name} > /tmp/mysql/${da_name}_${DUMP_TIME}.sql" >> ${DUMP_SHELL}
+      echo "${COMMON_DUMP_CMD} -h ${co_name} ${da_name} > /tmp/mysql/${da_name}_${DUMP_TIME}.sql" >> ${DUMP_SHELL}
     ;;
     # 备份指定数据库表结构
     database)
       echo "Database: ${da_name}"
-      echo "${COMMON_DUMP_CMD} --no-data ${da_name} > /tmp/mysql/${da_name}_${DUMP_TIME}.txt" >> ${DUMP_SHELL}
+      echo "${COMMON_DUMP_CMD} -h ${co_name} --no-data ${da_name} > /tmp/mysql/${da_name}_${DUMP_TIME}.txt" >> ${DUMP_SHELL}
     ;;
     *) :;;
   esac
