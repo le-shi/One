@@ -13,12 +13,12 @@ I will talk only about scp. As already said, rcp is the same beast with regard t
 In all cases aside from [remote-to-remote scenario](#remote-to-remote-mode) the scp command processes command line options and then starts an SSH connection to the remote host. Another scp command is run on the remote side through that connection in either **source** or **sink** mode. Source mode reads files and sends them over to the other side, sink mode accepts them. Source and sink modes are triggered using **-f** (from) and **-t** (to) options, respectively. These options are for internal usage only and aren't documented. There is also the 3rd hidden option, **-d**, when the target is expected to be a directory.
 
 So, slightly simplified, the local to remote mode of scp works like this:
-![](./scp.1.gif)
+![](./images/scp.1.gif)
 
 
 ## The protocol
 So, how does the transfer protocol actually works? If you forget about ssh, sshd and the connection between them and concentrate only on interaction between scp in "normal" mode and scp in the sink mode, you can see the scenario like this (if you copied from remote to local the remote scp command would have been run with **-f** option instead of **-t**, denoting the source mode):
-![](./scp.2.gif)
+![](./images/scp.2.gif)
 
 
 **Another important thing is that scp processes with options `-f` and `-t` never run against each other.** That means that one of those options is always used on the remote side and local scp process (the one started by the user from the command line) then simulates the other mode because it's also the process that interacts with the user.
