@@ -8,6 +8,12 @@
 
         # cp -rp /etc/ssh /etc/ssh.bak
 
+        如果原来的openssh有了自定义配置，还需要将这些配置继承到新的openssh配置文件里
+        如果原来的openssh有了自定义配置，还需要将这些配置继承到新的openssh配置文件里
+        如果原来的openssh有了自定义配置，还需要将这些配置继承到新的openssh配置文件里
+        # grep -Ev "#|^$" /etc/ssh/sshd_config
+        # grep -Ev "#|^$" /etc/ssh/ssh_config
+
 2. 必要软件的安装
 
         # yum -y install gcc zlib zlib-devel openssl-devel
@@ -88,6 +94,12 @@
         # systemctl status sshd
 
 1. 更改默认的ssh命令
+
+        检查环境变量里有没有 /usr/local/bin 路径
+        env | grep '/usr/local/bin'
+        有的话，跳过这段，看最后减权限那句；没有的话，继续看
+        echo 'export PATH=$PATH:/usr/local/bin' | tee -a /etc/profile
+        source /etc/profile
 
         chmod -x /usr/bin/ssh
 
