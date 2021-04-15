@@ -62,7 +62,7 @@
 
         # mv /usr/lib/systemd/system/sshd.service /usr/lib/systemd/system/sshd.service_bak
 
-1. 在OpenSSH_8.0p1源码包中，把一些服务文件复制到系统中：
+2. 在OpenSSH_8.0p1源码包中，把一些服务文件复制到系统中：
 
         # cp contrib/redhat/sshd.init /etc/init.d/sshd
 
@@ -70,7 +70,7 @@
 
         #  chmod +x /etc/init.d/sshd
 
-1. 修改/etc/init.d/sshd中的SSHD路径：
+3. 修改/etc/init.d/sshd中的SSHD路径：
 
         # vim /etc/init.d/sshd
 
@@ -84,8 +84,7 @@
 
         PermitRootLogin yes
 
-
-1. 重启服务：
+4. 重启服务：
 
         # systemctl daemon-reload
 
@@ -93,19 +92,19 @@
 
         # systemctl status sshd
 
-1. 更改默认的ssh命令
+5. 更改默认的ssh命令
 
-        检查环境变量里有没有 /usr/local/bin 路径
-        env | grep '/usr/local/bin'
-        有的话，跳过这段，看最后减权限那句；没有的话，继续看
-        echo 'export PATH=$PATH:/usr/local/bin' | tee -a /etc/profile
-        source /etc/profile
+        备份原有的ssh
+        mv /usr/bin/ssh{.old-bak}
 
-        chmod -x /usr/bin/ssh
+        创建软连接
+        ln -s /usr/local/sbin/ssh /usr/bin/ssh
 
-1. 新版本的ssh
+        验证
+        type ssh
+
+6. 新版本的ssh
 
         ssh -V
-        如果提示权限不足，就新打开一个终端，再执行ssh -V
 
-1. 新打开一个ssh终端，可以正常连接就行
+7. 新打开一个ssh终端，可以正常连接就行
