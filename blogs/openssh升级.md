@@ -42,7 +42,7 @@
 
         上一步正常执行后，开始编译安装。
 
-        # make -j 4
+        # make -j $(nproc)
 
         # make install
 

@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
-# Centos 7.x
+# Centos 7.x | Ubuntu 18.04LTS
 # Usage: ./script.sh or ./script.sh [Options]
 # default install docker, docker-compose, docker swarm network, templates, zbxUI
 # Options:
 #   clean   清理docker, docker-compose, docker swarm network, docker image, docker container, 为了安全着想，不会清理数据目录
+# https://docs.docker.com/engine/security/rootless/
 
 #
 # Set Colors
@@ -60,25 +61,65 @@ wgetSet(){
   # wget --timestamping --continue  --no-verbose --tries=3 ${1}
 }
 
+do_get_system_name (){
+    system_version_num=$(awk -F 'VERSION_ID=' '/VERSION_ID=/ {print $2}' /etc/os-release | sed 's/"//g')
+    if grep -Eqii "CentOS" /etc/issue || grep -Eq "CentOS" /etc/*-release 2>/dev/null; then
+        system_version='CentOS'
+        PM='yum'
+    elif grep -Eqi "Red Hat Enterprise Linux Server" /etc/issue || grep -Eq "Red Hat Enterprise Linux Server" /etc/*-release 2>/dev/null; then
+        system_version='RHEL'
+        PM='yum'
+    elif grep -Eqi "Aliyun" /etc/issue || grep -Eq "Aliyun" /etc/*-release 2>/dev/null; then
+        system_version='Aliyun'
+        PM='yum'
+    elif grep -Eqi "Fedora" /etc/issue || grep -Eq "Fedora" /etc/*-release 2>/dev/null; then
+        system_version='Fedora'
+        PM='yum'
+    elif grep -Eqi "Debian" /etc/issue || grep -Eq "Debian" /etc/*-release 2>/dev/null; then
+        system_version='Debian'
+        PM='apt'
+    elif grep -Eqi "Ubuntu" /etc/issue || grep -Eq "Ubuntu" /etc/*-release 2>/dev/null; then
+        system_version='Ubuntu'
+        PM='apt'
+    elif grep -Eqi "Raspbian" /etc/issue || grep -Eq "Raspbian" /etc/*-release 2>/dev/null; then
+        system_version='Raspbian'
+        PM='apt'
+    elif grep -Eqi "Mint" /etc/issue || grep -Eq "Mint" /etc/*-release 2>/dev/null; then
+        system_version='Mint'
+        PM='apt'
+    elif grep -Eqi "Kylin" /etc/issue || grep -Eq "Kylin" /etc/*-release 2>/dev/null; then
+        system_version='Kylin'
+        PM='apt'
+    else
+        system_version='unknow'
+        system_version_num='unknow'
+    fi
+}
 
 do_system_optimize(){
-    # selinux、firewalld、ipv4转发、tcp端口范围、系统,用户,进程文件打开数、tcp接收(发送)缓存区大小、单进程VMA限制
+    # selinux,firewalld,ipv4转发,tcp端口范围,系统,用户,进程文件打开数,tcp接收(发送)缓存区大小,单进程VMA限制,监听端口的全连接、半连接队列长度,内存分配策略
     # [job name] exp: ev, cur: cv, res: success
-    ## selinux
-    info_un "[selinux] exp: Disabled, "
-    selinux_status=$(getenforce 2>/dev/null)
-    info_un2 "cur: ${selinux_status:--}, res: "
-    if [[ ${selinux_status} == "Enforcing" ]]
-    then
-        setenforce 0
-        sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
-        [[ $? == 0 ]] && info_nu "success"
-    elif [[ ${selinux_status} == "Disabled" ]]
-    then
-        info_nu "It is expected, not modified"
-    else
-        info_nu "selinux not found!"
-    fi
+
+    case ${system_version} in
+        CentOS|RHEL)
+            ## selinux
+            info_un "[selinux] exp: Disabled, "
+            selinux_status=$(getenforce 2>/dev/null)
+            info_un2 "cur: ${selinux_status:--}, res: "
+            if [[ ${selinux_status} == "Enforcing" ]]
+            then
+                setenforce 0
+                sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+                [[ $? == 0 ]] && info_nu "success"
+            elif [[ ${selinux_status} == "Disabled" ]]
+            then
+                info_nu "It is expected, not modified"
+            else
+                info_nu "selinux not found!"
+            fi
+        ;;
+        *) :;;
+    esac    
 
     ## firewalld
     info_un "[firewalld] exp: inactive, "
@@ -205,6 +246,41 @@ do_system_optimize(){
         info_nu "It is expected, not modified"
     fi
 
+    ## 全连接 - 处于监听状态的端口，监听队列的长度 as /proc/sys/net/core/somaxconn
+    info_un "[net.core.somaxconn] exp: 32768, "
+    net_core_somaxconn=$(sysctl -n net.core.somaxconn)
+    info_un2 "cur: ${net_core_somaxconn}, res: "
+    if [[ "${net_core_somaxconn}" -lt 32768 ]]
+    then
+        sysctl -w -q net.core.somaxconn=32768
+        [[ $? == 0 ]] && info_nu "success"
+    else
+        info_nu "It is expected, not modified"
+    fi
+
+    ## 半连接 - 处于监听状态的端口，监听队列的长度 as /proc/sys/net/ipv4/tcp_max_syn_backlog
+    info_un "[net.ipv4.tcp_max_syn_backlog] exp: 32768, "
+    tcp_max_syn_backlog=$(sysctl -n net.ipv4.tcp_max_syn_backlog)
+    info_un2 "cur: ${tcp_max_syn_backlog}, res: "
+    if [[ "${tcp_max_syn_backlog}" -lt 32768 ]]
+    then
+        sysctl -w -q net.ipv4.tcp_max_syn_backlog=32768
+        [[ $? == 0 ]] && info_nu "success"
+    else
+        info_nu "It is expected, not modified"
+    fi
+
+    ## 设置内核允许分配给应用进程的的物理内存(0:内存不足报错 1:所有物理内存 2:超额物理和交换空间内存) as /proc/sys/vm/overcommit_memory
+    info_un "[vm.overcommit_memory] exp: 32768, "
+    overcommit_memory=$(sysctl -n vm.overcommit_memory)
+    info_un2 "cur: ${overcommit_memory}, res: "
+    if [[ "${overcommit_memory}" -lt 1 ]]
+    then
+        sysctl -w -q vm.overcommit_memory=1
+        [[ $? == 0 ]] && info_nu "success"
+    else
+        info_nu "It is expected, not modified"
+    fi
 }
 
 # do_system_optimize

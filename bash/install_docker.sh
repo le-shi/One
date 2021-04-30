@@ -1,13 +1,20 @@
 #!/bin/sh
 # 一键安装docker环境
-docker_version=20.10.2
+docker_name=docker-20.10.2.tgz
+#CentOS|RHEL
+systemd_root_path=/usr/lib
+#Ubuntu
+#systemd_root_path=/lib
 
-wget --timestamping --continue  --no-verbose --tries=3 https://download.docker.com/linux/static/stable/x86_64/docker-${docker_version}.tgz
-tar -xf docker-${docker_version}.tgz
-sudo mv docker/* /usr/bin/ && rm docker -rf
+#下载docker二进制文件
+wget -Nc https://download.docker.com/linux/static/stable/$(uname --machine)/${docker_name}
+#解压拷贝docker二进制文件
+tar -xf ${docker_name}
+#放到bin目录
+mv docker/* /usr/bin/ && rm docker -rf
 
 # 生成docker服务文件
-cat > /usr/lib/systemd/system/docker.service <<EOF
+cat > ${systemd_root_path}/systemd/system/docker.service <<EOF
 [Unit]
 Description=Docker Application Container Engine
 Documentation=https://docs.docker.com
@@ -37,13 +44,13 @@ WantedBy=multi-user.target
 EOF
 
 # 生成docker socket
-cat > /usr/lib/systemd/system/docker.socket <<EOF
+cat > ${systemd_root_path}/systemd/system/docker.socket <<EOF
 [Unit]
 Description=Docker Socket for the API
 
 [Socket]
 ListenStream=/var/run/docker.sock
-SocketMode=0660
+SocketMode=0666
 SocketUser=root
 SocketGroup=root
 
@@ -52,7 +59,7 @@ WantedBy=sockets.target
 EOF
 
 # 生成containerd服务文件
-cat > /usr/lib/systemd/system/containerd.service <<EOF
+cat > ${systemd_root_path}/systemd/system/containerd.service <<EOF
 [Unit]
 Description=containerd container runtime
 Documentation=https://containerd.io
@@ -82,8 +89,9 @@ disabled_plugins = ["cri"]
 EOF
 
 # 授权644
-chmod 644 /usr/lib/systemd/system/{docker.service,docker.socket,containerd.service} /etc/containerd/config.toml
+chmod 644 ${systemd_root_path}/systemd/system/{docker.service,docker.socket,containerd.service} /etc/containerd/config.toml
 
+# 优化docker日志
 mkdir -p /etc/docker
 cat > /etc/docker/daemon.json <<EOF
 {
@@ -102,7 +110,8 @@ cat > /etc/docker/daemon.json <<EOF
 EOF
 
 systemctl daemon-reload
-systemctl enable --now docker.service
+#开机启动并启动docker服务
+systemctl enable --now docker.service >/dev/null 2>&1
 
 # 显示docker版本
 docker version

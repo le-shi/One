@@ -116,5 +116,7 @@ text[2]=B 将数组第3个元素重新定义
 + 分组六
 
 ```bash
-六
+install_docker.sh: docker的二进制安装，开机启动
+install_docker-compose.sh: docker-compose的二进制安装
+system_optimize.sh: 系统参数优化
 ```
