@@ -4,7 +4,7 @@ set -e
 echo -e "\e[033mThe script is exist BUG.\e[0m  \e[031mDon't perform\e[0m"
 exit 1
 cmake_install (){
-make -j ${make_num}
+make -j $(nproc)
 make install
 echo -n "path: $(pwd)"
 }

@@ -7,10 +7,10 @@ wget https://www.python.org/ftp/python/${py_version}/Python-${py_version}.tgz
 tar -zxvf Python-${py_version}.tgz
 cd Python-${py_version} && \
 ./configure --enable-optimizations
-make -j $(grep -c "core" /proc/cpuinfo) && make install
+make -j $(nproc) && make install
 # 不对原来的python环境做修改
 # mv /usr/bin/python /usr/bin/python.old
 # ln -s /usr/local/bin/python3.7 /usr/bin/python
 #Install pip
 curl https://bootstrap.pypa.io/get-pip.py | python
-pip install --upgrade pip
+python3 -m pip install --upgrade pip

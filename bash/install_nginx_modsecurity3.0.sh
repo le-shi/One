@@ -56,7 +56,7 @@ cd nginx-1.14.1
 --with-ld-opt="-Wl,-rpath,$LUAJIT_LIB" ;
 
 make modules	#编译模块
-make
+make -j $(nproc)
 make install
 
 

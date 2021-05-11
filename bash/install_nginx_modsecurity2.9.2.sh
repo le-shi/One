@@ -99,7 +99,7 @@ cd ${nginxdir}/nginx-1.12.2
 --add-module=${nginxdir}/nginx-sticky-module \
 --add-module=${nginxdir}/mod_security/nginx/modsecurity
 
-make -j 4
+make -j $(nproc)
 make install
 
 if [ $? -eq '0' ];
@@ -141,7 +141,7 @@ echo '''
 
 # #2. 测试
 # #第一：重启nginx
-# nginx -s reload &
+# nginx -s reload
 # #第二：使用nikto测试owasp 核心规则是否生效
 # #Nikto扫描工具生成恶意请求，包括针对已知易受攻击的文件，跨站点脚本（XSS）和其他类型的攻击的探测。
 # #该工具还会报告传递给应用程序的请求，从而揭示应用程序中的潜在漏洞。

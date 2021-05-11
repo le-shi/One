@@ -2,7 +2,6 @@
 #all server funtion
 #Use:. /path/to/utils.sh
 
-countCpu=$(grep -c "processor" /proc/cpuinfo)
 proFile=/etc/profile
 goRoot=/usr/local
 goPath=/tmp
@@ -101,7 +100,7 @@ centosinstallGlibc (){
   mkdir -p glibc-${glicVersion}/build
   cd glibc-${glicVersion}/build
   ../configure --prefix=/usr --disable-profile --enable-add-ons --with-headers=/usr/include --with-binutils=/usr/bin
-  make -j ${countCpu}
+  make -j $(nproc)
   make install
   ldd -version
 }

@@ -8,7 +8,7 @@ else
  mkdir ${nginxdir}
 fi
 #yum
-yum -y install nss cmake make gcc gcc-c++ libevent  zlib zlib-devel openssl openssl-devel glibc glibc-devel compat-expat1 glibc.i686 procps procmail  ncurses-devel ncurses-libs ncurses-base ncurses  libuuid-devel pcre pcre-devel  libxslt libxml2 libxml2-devel gd-devel perl-ExtUtils-Embed perl-devel libxslt-devel GeoIP GeoIP-devel
+yum -y install nss cmake make gcc gcc-c++ libevent zlib zlib-devel openssl openssl-devel glibc glibc-devel compat-expat1 glibc.i686 procps procmail ncurses-devel ncurses-libs ncurses-base ncurses libuuid-devel pcre pcre-devel libxslt libxml2 libxml2-devel gd-devel perl-ExtUtils-Embed perl-devel libxslt-devel GeoIP GeoIP-devel
 #wget tar
 if [ -f ${nginxdir}/${nginxver} ];
 then
@@ -44,5 +44,5 @@ cd ${nginxdir}/nginx-1.12.2
 --lock-path=/var/lock/subsys/nginx  \
 --add-module=${nginxdir}/nginx-sticky-module
 
-make -j 4
+make -j $(nproc)
 make install

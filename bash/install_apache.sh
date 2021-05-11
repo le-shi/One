@@ -5,13 +5,12 @@ httpd=2.2.34
 apr=1.6.3
 apr_util=1.6.1
 pcre=8.41
-make_num=$(grep "processor" /proc/cpuinfo  -c)
 web_ins_dir=/tmp/apache_install
 [[ ! -d ${web_ins_dir} ]] && mkdir -vp ${web_ins_dir}
 
 
 cmake_install (){
-make -j ${make_num}
+make -j $(nproc)
 make install
 echo -n "cd $(pwd)"
 cd ${web_ins_dir}

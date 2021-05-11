@@ -8,7 +8,7 @@ yum -y install libevent memcached libmemcached libmemcached-devel gcc gcc-c++ ns
 wget -P /tmp https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz
 tar -zxvf  /tmp/Python-2.7.11.tgz -C  /tmp/
 cd  /tmp/Python-2.7.11 && ./configure
-make -j 4 && make install
+make -j $(nproc) && make install
 mv -f /usr/bin/python /usr/bin/python2.6_bak
 ln -s /usr/local/bin/python2.7 /usr/bin/python
 #Install pip
