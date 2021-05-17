@@ -26,15 +26,15 @@
 4. 下载OpenSSH新版本
 
         打开 https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/ 网站
-        选择 一个比较新的版本 进行下载，这里假设是下载 openssh-8.0p1
+        选择 一个比较新的版本 进行下载，这里假设是下载 openssh-8.6p1
 
 5. 传到服务器上面，目录随便
 
-6. 安装openssh-8.0p1
+6. 安装openssh-8.6p1
 
-        # tar -zxvf openssh-8.0p1.tar.gz
+        # tar -zxvf openssh-8.6p1.tar.gz
 
-        # cd openssh-8.0p1
+        # cd openssh-8.6p1
 
         # ./configure
 
