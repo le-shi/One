@@ -21,7 +21,7 @@
 3. 查看当前OpenSSH版本
 
         # ssh -V
-        OpenSSH_7.0.4, OpenSSL 1.0.1e-fips 11 Feb 2017
+        OpenSSH_7.4p1, OpenSSL 1.0.2k-fips  26 Jan 2017
 
 4. 下载OpenSSH新版本
 
@@ -68,7 +68,7 @@
 
         # cp contrib/redhat/sshd.pam /etc/pam.d/sshd.pam
 
-        #  chmod +x /etc/init.d/sshd
+        # chmod +x /etc/init.d/sshd
 
 3. 修改/etc/init.d/sshd中的SSHD路径：
 
@@ -95,7 +95,7 @@
 5. 更改默认的ssh命令
 
         备份原有的ssh
-        mv /usr/bin/ssh{.old-bak}
+        mv /usr/bin/ssh{,.old-bak}
 
         创建软连接
         ln -s /usr/local/sbin/ssh /usr/bin/ssh
