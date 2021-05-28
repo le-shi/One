@@ -10,7 +10,7 @@
    2. 同时查看多个指定服务的主机IP地址: `awk '/PUT \/eureka\/apps\//{print $3,$8}' eureka_request.txt | awk -F '/' '{print $1,$4}' | sort | uniq | grep -Ei '服务1|服务2|服务3'`
 7. 显示结果是 `172.30.1.9 TEST` 这种形式，第一列就是服务的主机IP地址，第二列是服务名，如果是多副本(多实例)显示的真实主机IP地址可能是多个
 
-## 找到真实IP后，发现不是来自当前环境的服务，如何禁止注册?
+## 找到真实IP后，发现不是来自当前环境的服务，如何踢出Eureka(禁止注册)，在这里我们可以叫它 `坏的实例`
 
 1. 通过上面的步骤查出的IP地址
 2. 添加 iptables 禁止规则，不需要重启docker或者容器，即时生效
@@ -59,3 +59,20 @@
       # 现在禁止规则已经添加，应该看不到流量进出
       # 去掉禁止规则，可以看到输出
       ```
+
+4. 禁止规则添加后，`坏的实例` 为什么还在 注册中心 服务列表，什么时候变更状态？
+
+   ```bash
+   剔除失效服务间隔时间为90s且存在自我保护的机制
+
+   # 服务参数参考
+   # 期望的客户端更新间隔(以秒为单位)(default: 30s)
+   eureka.server.expected-client-renewal-interval-seconds=30
+   # 指示eureka服务器从收到最后一次心跳开始等待的时间(以秒为单位)(default: 90s)
+   eureka.instance.lease-expiration-duration-in-seconds=90
+   # 指示eureka客户端需要发送心跳到eureka服务器的频率(以秒为单位)，以表明它仍然活着。(default: 30s)
+   # 如果在leaseExpirationDurationInSeconds中指定的时间内没有收到心跳，eureka服务器将从其视图中删除该实例，通过禁止该实例的流量
+   eureka.instance.lease-renewal-interval-in-seconds=30
+   # 清理无效节点的时间间隔(以毫秒为单位)(default: 6000)
+   eureka.server.evictionIntervalTimerInMs=6000
+   ```
