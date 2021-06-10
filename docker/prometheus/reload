@@ -1,5 +1,8 @@
+set -x
+
+docker exec -ti prometheus promtool check config /etc/prometheus/prometheus.yml
+
 curl -XPOST \
 http://127.0.0.1:9090/-/reload
-set -x
-docker restart prometheus
-docker exec -ti prometheus promtool check config /etc/prometheus/prometheus.yml
+
+# docker restart prometheus

@@ -28,22 +28,22 @@ scrape_configs:
     file_sd_configs:
     - files:
       - targets.yml
-  # jenkins
-  - job_name: 'jenkins'
-    metrics_path: '/prometheus'
-    static_configs:
-      - targets: ['jenkins:8080']
-        labels:
-          hostname: 'jenkins.ops.cn'
-          type: jenkins
-  # zipkin
-  - job_name: 'zipkin'
-    metrics_path: '/prometheus'
-    static_configs:
-      - targets: ['zipkin:9411']
-        labels:
-          hostname: 'zipkin'
-          type: zipkin
+  # # jenkins
+  # - job_name: 'jenkins'
+  #   metrics_path: '/prometheus'
+  #   static_configs:
+  #     - targets: ['jenkins:8080']
+  #       labels:
+  #         hostname: 'jenkins.ops.cn'
+  #         type: jenkins
+  # # zipkin
+  # - job_name: 'zipkin'
+  #   metrics_path: '/prometheus'
+  #   static_configs:
+  #     - targets: ['zipkin:9411']
+  #       labels:
+  #         hostname: 'zipkin'
+  #         type: zipkin
   # # Eureka - jvm
   # - job_name: 'jvm'
   #   eureka_sd_configs:
