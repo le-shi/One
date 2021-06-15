@@ -5,7 +5,7 @@ DUMP_TIME=${DUMP_DAY}
 # 定义网络名称
 NETWORK_NAME=db_network
 # 定义镜像
-IMAGE_NAME=mysql:5.7.30
+IMAGE_NAME=mysql:5.7.34
 # 定义容器名称
 CONTAINER_NAME=(mysql)
 # 定义备份数据库的密码
@@ -68,12 +68,15 @@ do
   done
 done
 
-# 统计磁盘使用, 如果使用空间超过80%, 本地将保留最近7天的备份
-dump_dir_used=$(df ${DUMP_DIRECTORY} --output=pcent | tail -n 1 | awk -F '%' '{print $1}' | sed 's/ //g')
-
-if [[ ${dump_dir_used} -gt 80 ]]
+# 统计磁盘使用, 如果使用空间超过80%, 本地将保留最近7天的备份；如果设置的值小于7，会略过当前操作
+if [[ ${BACKUP_KEEP_DAY} -gt 7 ]]
 then
-   BACKUP_KEEP_DAY=7
+  dump_dir_used=$(df ${DUMP_DIRECTORY} --output=pcent | tail -n 1 | awk -F '%' '{print $1}' | sed 's/ //g')
+
+  if [[ ${dump_dir_used} -gt 80 ]]
+  then
+    BACKUP_KEEP_DAY=7
+  fi
 fi
 
 # 执行备份命令
