@@ -1,13 +1,13 @@
 # 声明
 
-> 启动前先把prometheus挂在的TSDB目录进行授权: `chown -R 65534.65534 ./volume/prometheus`
+> 启动前先把prometheus挂载的目录进行授权: `chown -R 65534.65534 ./volume/prometheus`
 
 ---
 
 1. 告警规则来自: <https://awesome-prometheus-alerts.grep.to> 里面部分规则没有的是通过官方插件或文档获取的
    1. 规则获取日期: 2020-12-03
    2. 日期之后的规则可能会有更新,自己可进行对比或Fork此项目进行修改
-   3. 官方收集的exporter: <https://prometheus.io/docs/instrumenting/exporters/>
+   3. 官方收集的exporter列表: <https://prometheus.io/docs/instrumenting/exporters/>
 2. 部分规则进行了简单的修改,可根据自己实际的情况进行调试
 3. 告警规则文件: alertmanager-rules.yml
 4. 当前规则包含:

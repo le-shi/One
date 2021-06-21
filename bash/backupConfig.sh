@@ -188,6 +188,7 @@ main(){
     # do_sync_custome_file git_config /root/git
     # do_sync_custome_file svn_config /root/svn
     # do_sync_custome_file mysql_config /root/mysql
+    # do_sync_custome_file oracle_config /etc/oratab
 
     if [[ ${count} -eq 0 ]]
     then
