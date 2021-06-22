@@ -1078,3 +1078,33 @@ groups:
     annotations:
       summary: "JVM memory filling up (instance {{ $labels.instance }})"
       description: "JVM memory is filling up (> 80%)\n  VALUE = {{ $value }}\n  APPLICATION: {{ $labels.application }}"
+
+# domain
+- name: domain
+  rules:
+  - alert: DomainExpiring
+    expr: domain_expiry_days < 30
+    for: 1h
+    labels:
+      severity: warning
+    annotations:
+      description: 'Domain {{ $labels.instance }} will expire in less than 30 days'
+      summary: '{{ $labels.instance }}: domain is expiring\n  VALUE = {{ $value }}'
+
+  - alert: DomainExpiring
+    expr: domain_expiry_days < 5
+    for: 1h
+    labels:
+      severity: critical
+    annotations:
+      description: 'Domain {{ $labels.instance }} will expire in less than 5 days'
+      summary: '{{ $labels.instance }}: domain is expiring\n  VALUE = {{ $value }}'
+
+  - alert: DomainExpired
+    expr: domain_expiry_days <= 0
+    for: 1h
+    labels:
+      severity: critical
+    annotations:
+      description: 'Domain {{ $labels.instance }} expire has expired already'
+      summary: '{{ $labels.instance }}: domain has expired already\n  VALUE = {{ $value }}'

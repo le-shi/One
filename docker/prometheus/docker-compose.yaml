@@ -127,6 +127,16 @@ services:
     networks:
       - ops
 
+# domain
+  domain:
+    container_name: domain-exporter
+    image: caarlos0/domain_exporter:v1.11.0
+    restart: always
+    ports:
+      - "9222:9222"
+    networks:
+      - ops
+
   openstack-exporter:
     container_name: openstack-exporter
     image: quay.io/niedbalski/openstack-exporter-linux-amd64:v1.4.0

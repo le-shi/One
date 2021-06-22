@@ -14,13 +14,19 @@
    1. 栗子: 类别(exporter来源)-[Grafana Dashboard Id]
    2. prometheus(自身监控)
    3. host([prom/node-exporter](https://hub.docker.com/r/prom/node-exporter))-[8919,1856]
+      1. 监控对象: 主机，服务器
    4. blackbox([prom/blackbox-exporter](https://hub.docker.com/r/prom/blackbox-exporter))-[9965]
+      1. 监控对象: http、https、tcp端点，ssl的过期时间
    5. mysql([prom/mysqld-exporter](https://hub.docker.com/r/prom/mysqld-exporter))-[7362]
    6. redis([oliver006/redis_exporter](https://hub.docker.com/r/oliver006/redis_exporter))-[763]
    7. rabbitmq([rabbitmq的prometheus插件,3.8.9之后自动开启(port: 15692)](https://www.rabbitmq.com/prometheus.html))-[10991]
    8. ceph([ceph的prometheus模块,需手动开启(port: 9283)](https://docs.ceph.com/en/latest/mgr/prometheus/))-[2842]
    9. jenkins([jenkins的prometheus插件,需手动安装(port: 8080/prometheus)](https://plugins.jenkins.io/prometheus/))-[9524]
+      1. 监控对象: jenkins的job
    10. jvm([MavenPlugin](./docs/jvm.md))-[4701]
+       1. 监控对象: java程序的jvm虚机使用情况
+   11. domain([domain_exporter](https://github.com/le-shi/domain_exporter))-[]
+       1. 监控对象: 域名的过期时间
 5. 关于报警时间的问题
     1. Prometheus 告警自定义模板的默认使用的是`UTC`时间
     2. 改成北京时间,其中 `Add 28800e9`  就是表示加8个小时。[28800e9为什么表示8小时?](https://www.google.com/search?q=28800e9%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A1%A8%E7%A4%BA8%E5%B0%8F%E6%97%B6%3F&oq=28800e9%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A1%A8%E7%A4%BA8%E5%B0%8F%E6%97%B6%3F&aqs=chrome..69i64j69i57.2040j0j1&sourceid=chrome&ie=UTF-8)
