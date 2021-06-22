@@ -25,7 +25,7 @@
       1. 监控对象: jenkins的job
    10. jvm([MavenPlugin](./docs/jvm.md))-[4701]
        1. 监控对象: java程序的jvm虚机使用情况
-   11. domain([domain_exporter](https://github.com/le-shi/domain_exporter))-[]
+   11. domain([domain_exporter](https://github.com/le-shi/domain_exporter))-[14605]
        1. 监控对象: 域名的过期时间
 5. 关于报警时间的问题
     1. Prometheus 告警自定义模板的默认使用的是`UTC`时间
