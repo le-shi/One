@@ -188,7 +188,8 @@ main(){
     # do_sync_custome_file git_config /root/git
     # do_sync_custome_file svn_config /root/svn
     # do_sync_custome_file mysql_config /root/mysql
-    # do_sync_custome_file oracle_config /etc/oratab
+    # do_sync_custome_file oracle_config "/etc/oratab /home/oracle/*sh"
+    # do_sync_custome_file ewebeditor_config /home/docker-data/volumes/home_ewebeditor_data/_data
 
     if [[ ${count} -eq 0 ]]
     then

@@ -1,6 +1,6 @@
 # 声明
 
-> 启动前先把prometheus挂载的目录进行授权: `chown -R 65534.65534 ./volume/prometheus`
+> 启动前先把prometheus挂载的目录进行授权: `chown -R 65534.65534 ./volume/{prometheus,pushgateway}`
 
 ---
 

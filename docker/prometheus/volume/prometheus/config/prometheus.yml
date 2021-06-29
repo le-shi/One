@@ -23,6 +23,14 @@ scrape_configs:
       labels: 
         hostname: 'prometheus'
         type: prom
+  - job_name: 'pushgateway'
+    # https://prometheus.io/docs/Prometheus/latest/configuration/configuration/#scrape_config
+    honor_labels: true
+    static_configs:
+    - targets: ['pushgateway:9091']
+      labels:
+        hostname: 'pushgateway'
+        type: gateway
   # 使用文件发现
   - job_name: 'file_ds'
     file_sd_configs:

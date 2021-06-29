@@ -24,6 +24,9 @@ services:
   pushgateway:
      container_name: pushgateway
      image: prom/pushgateway:v1.4.1
+     command: --persistence.file=/pushgateway/gateway.db --persistence.interval=3m
+     volumes:
+       - "./volume/pushgateway/data:/pushgateway"
      hostname: pushgateway
      restart: always
      ports:
