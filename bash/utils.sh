@@ -91,7 +91,7 @@ centosInstallGo (){
   echo -e "...\ngo install successful."
 }
 
-centosinstallGlibc (){
+centosInstallGlibc (){
   glibcpath=/tmp/glibc
   judgeDirectory ${glibcpath}
   cd ${glibcpath}

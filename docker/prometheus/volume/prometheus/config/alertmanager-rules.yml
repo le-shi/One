@@ -502,7 +502,7 @@ groups:
 
   - alert: BlackboxSslCertificateWillExpireSoon
     expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 30
-    for: 5m
+    for: 1h
     labels:
       severity: warning
     annotations:
@@ -511,7 +511,7 @@ groups:
 
   - alert: BlackboxSslCertificateWillExpireSoon
     expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 3
-    for: 5m
+    for: 30m
     labels:
       severity: critical
     annotations:
