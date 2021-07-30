@@ -51,14 +51,14 @@ services:
 
   grafana:
     container_name: grafana
-    image: grafana/grafana:7.5.7
+    image: grafana/grafana:8.0.6
     hostname: grafana
     restart: always
     user: root
     environment:
       - "GF_SERVER_ROOT_URL=http://grafana.ops.cn"
       - "GF_SECURITY_ADMIN_PASSWORD=admin!@#"
-      - "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel"
+      - "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel,redis-datasource"
     ports:
       - "3000:3000"
     volumes:

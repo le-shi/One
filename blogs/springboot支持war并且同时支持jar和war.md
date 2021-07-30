@@ -16,15 +16,15 @@
 
     ```xml
     <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <!-- 移除嵌入式tomcat插件 -->
+        <exclusions>
+            <exclusion>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <!-- 移除嵌入式tomcat插件 -->
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-starter-tomcat</artifactId>
-                    </exclusion>
-                </exclusions>
+                <artifactId>spring-boot-starter-tomcat</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
     ```
 
@@ -85,12 +85,13 @@
     import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
     // spring 1.x
     // import org.springframework.boot.web.support.SpringBootServletInitializer;
-    public class SpringBootStartApplication extends SpringBootServletInitializer {
+    public class ServletInitializer extends SpringBootServletInitializer {
         @Override
         protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 
             //  这里sources的类就是启动类
             return builder.sources(Application.class);
+        }
     }
     ```
 
