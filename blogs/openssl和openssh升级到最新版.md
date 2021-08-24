@@ -236,16 +236,16 @@
 
 ## 清理工作
 
-1. 关闭并卸载 telnet-server 服务
-
-        # 当操作系统是 Centos 7.x 时，使用此命令
-        systemctl disable --now xinetd
-
-        # 当操作系统是 Centos 6.x 时，使用此命令
-        service xinetd stop
+1. 卸载 telnet-server 服务并重启 xinetd 服务
 
         # 卸载 telnet-server 服务
-        yum -y remove xinetd telnet-server
+        yum -y remove telnet-server
+
+        # 当操作系统是 Centos 7.x 时，使用此命令
+        systemctl restart xinetd
+
+        # 当操作系统是 Centos 6.x 时，使用此命令
+        service xinetd restart
 
 2. 删除用户
 

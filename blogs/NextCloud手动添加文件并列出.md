@@ -2,9 +2,9 @@ NextCloud 自带的数据目录在列目录时都是通过数据库查询，如�
 
 ```bash
 # 扫描所有账户的文件
-sudo -u www php console.php files:scan --all
+sudo -u www-data php console.php files:scan --all
 # 扫描指定路径的文件，路径要以 user_id 开始
-sudo -u www php console.php files:scan --path user_id/path/to/files
+sudo -u www-data php console.php files:scan --path user_id/path/to/files
 # 扫描指定账户的文件
-sudo -u www php console.php files:scan user_id
+sudo -u www-data php console.php files:scan user_id
 ```

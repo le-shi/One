@@ -80,6 +80,9 @@
 5. 修改启动类，并重写初始化方法，新增 `ServletInitializer.java` 文件，无需操作启动类
 
     ```java
+    // 声明包路径，参考 Application.class
+    package com;
+
     import org.springframework.boot.builder.SpringApplicationBuilder;
     // spring 2.x
     import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

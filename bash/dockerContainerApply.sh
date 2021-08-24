@@ -73,13 +73,13 @@ check_env(){
     # 统计文件行数
     count_max_line=$(awk END'{print NR}' ${env_file})
     # 检查有没有变量，没有就添加
-    if [[ ! $(grep "${env_version_set}=" ${env_file}) ]]; then
+    if [[ ! $(grep "${env_version_set}=" ${env_file} | grep -v "#") ]]; then
         sed -i "${count_max_line}a ${env_version_set}=${app_version}" ${env_file}
     else
         # 获取.env的`IMAGE_VERSION_XXX`
-        env_name=$(grep "${env_version_set}=" ${env_file})
+        env_name=$(grep "${env_version_set}=" ${env_file} | grep -v "#")
         # 获取.env的`IMAGE_VERSION_XXX`所在行号
-        env_line_number=$(grep -n "${env_version_set}=" ${env_file} | awk -F ':' '{print $1}')
+        env_line_number=$(grep -n "${env_version_set}=" ${env_file} | grep -v "#" | awk -F ':' '{print $1}')
         # .env的新名字
         env_new_name=${env_version_set}=${app_version}
         if [[ ! ${env_name} == ${env_new_name} ]]; then
