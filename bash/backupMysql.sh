@@ -79,11 +79,11 @@ then
   fi
 fi
 
+find ${DUMP_DIRECTORY}/ -mtime +${BACKUP_KEEP_DAY} -exec rm -f {} \;
+res1=$?
 # 执行备份命令
 echo "Dump doing..."
 docker run --rm -e MYSQL_ROOT_PASSWORD=123456 -v ${DUMP_DIRECTORY}/${DUMP_DAY}/:/tmp/mysql/ -v ${DUMP_SHELL}:/tmp/dump.sh --network=${NETWORK_NAME} --name dump_mysql ${IMAGE_NAME}  ./tmp/dump.sh 2>/dev/null
-res1=$?
-find ${DUMP_DIRECTORY}/ -mtime +${BACKUP_KEEP_DAY} -exec rm -f {} \;
 res2=$?
 # # 清理空目录
 # find ${DUMP_DIRECTORY}/ -type d -size 6c -exec rmdir {} \;

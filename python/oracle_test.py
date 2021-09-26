@@ -1,6 +1,8 @@
 #!/bin/python
 #-*- coding:utf-8 -*-
 
+# 操作oracle
+
 #pip install cx_Oracle --upgrade
 #(57M) https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm?AuthParam=1545735202_bc446ba4b6fc07acb77adaa2c677f704
 

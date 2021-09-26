@@ -17,20 +17,34 @@ route:
   group_interval: 3m
   # 发送报警间隔，如果指定时间内没有修复，则重新发送报警。
   repeat_interval: 1h
-  # 选择警告发送器分组 one_wx
+  # 定义告警接收分组名称 one_wx.告警会自动从上级路由走到下级路由，下级路由会覆盖上级路由的设置,同级路由加上continue: true 才会继续往之后的同级路由匹配，并给所有匹配到的同级路由的receiver发信息。
   receiver: 'one_wx'
+  # 定义消息发送的路由
+  routes:
+  - match:
+    # continue 匹配到此规则的告警能继续同级 routes 匹配，并对同级中匹配到的所有receiver发送告警(defailt: false)
+    continue: true
+    receiver: 'one_wx'
 
-# 警告发送器分组的列表
+# 定义告警接收分组的列表
 receivers:
 # one_wx分组的定义
 - name: 'one_wx'
-  # 微信配置
+  # 微信配置 - 采用企业微信的方式通过告警
   wechat_configs:
   - send_resolved: true
-    to_party: 22 
-    agent_id: '1000023' 
+    # #企业ID，登录后台--> 我的企业--> 底部企业ID
     corp_id: 'wwf1d319ac8932285e6'
+    # 自建应用的AgentId
+    agent_id: '1000023'
+    # 自建应用的Secret
     api_secret: 'EE15UQ9CJ9A22H4eT-bUIbVSMPicJPf5tgQCIguSN4'
+    # 接收告警消息的人员Id(成员详情里的"账号", 特殊变量 @all 代表"可见范围"的所有人), 需要在自建应用的"可见范围"设置需要接受告警消息的人
+    to_user: '@all'
+    # 接收告警消息的部门Id(在"组织架构", 选中部门名称后，点击名称右侧的三个点, 在弹出的二级菜单显示 "部门ID: 1"), 需要在自建应用的"可见范围"设置需要接受告警消息的部门
+    # to_party: 24
+    # 指定告警信息模板
+    # message: '{{ template "<这里写的是模板文件 define 的名字: template-name>" }}'
 
 # 抑制规则的列表
 # inhibit_rules:

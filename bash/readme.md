@@ -120,3 +120,30 @@ install_docker.sh: docker的二进制安装，开机启动
 install_docker-compose.sh: docker-compose的二进制安装
 system_optimize.sh: 系统参数优化
 ```
+
++ 分组七
+
+```bash
+# Linux中缺省的变量
+$PATH 环境变量路径
+$TMOUT ssh闲置超时时间
+$RANDOM 产生随机数
+$OLDPWD 记录着cd前的目录，新打开的shell此变量为空，执行 cd /path/to 命令后，执行命令的目录成为OLDPWD变量的值，命令 cd - 返回的目录是根据这个变量的值决定的
+$BASH 当前 shell 的可执行路径，适用于 bash
+$ZSH 当前 shell 的可执行路径，适用于 zsh
+$SHELL 当前连接的 shell 类型
+$SHELLOPTS 当前连接的 shell 参数
+$HOME 当前用户的家目录，执行 cd 命令后，这里不需要参数，切换到的目录是家目录，也就是变量 HOME 的值
+$HISTCMD 下一个history记录的序号
+$HISTFILE history用来记录已执行命令的文件，变量置空时可以擦除history记录(抹除痕迹时很有用)
+$HOSTNAME 主机名
+$HOSTTYPE 机器的架构和位数
+$LANG 终端字符集
+$LOGNAME 当前登录的用户名
+$MAIL 本地mail存储的路径
+$OSTYPE 系统的类型
+$PPID 当前登录shell的PID
+$SSH_TTY 当前ssh连接所属的终端，服务器本地终端时，此变量为空
+$SSH_CLIENT ssh客户端的IP、端口和ssh服务端的端口，服务器本地终端时，此变量为空
+$SSH_CONNECTION ssh客户端的IP、端口和ssh服务端本地的IP、端口，服务器本地终端时，此变量为空
+```

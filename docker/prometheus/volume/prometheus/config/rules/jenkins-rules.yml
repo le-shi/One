@@ -1,0 +1,14 @@
+# https://awesome-prometheus-alerts.grep.to/rules
+groups:
+# jenkins
+- name: jenkins
+  rules:
+  - alert: JenkinsLastBuildResult
+    expr: default_jenkins_builds_last_build_result == 0
+    for: 5m
+    labels:
+      severity: warning
+      item: build_status
+    annotations:
+      summary: "Jenkins Job Failure (instance {{ $labels.instance }})"
+      description: "{{ $labels.jenkins_job }}"

@@ -9,7 +9,7 @@
    2. 日期之后的规则可能会有更新,自己可进行对比或Fork此项目进行修改
    3. 官方收集的exporter列表: <https://prometheus.io/docs/instrumenting/exporters/>
 2. 部分规则进行了简单的修改,可根据自己实际的情况进行调试
-3. 告警规则文件: alertmanager-rules.yml
+3. 告警规则文件: volume/prometheus/config/alertmanager-rules.yml
 4. 当前规则包含:
    1. 栗子: 类别-[exporter来源]-[Grafana Dashboard Id]
    2. prometheus-[自身监控]
@@ -17,7 +17,7 @@
       1. 监控对象: 主机，服务器的磁盘，内存，CPU，网络，Inode，运行时间，负载，TCP状态，文件描述符
    4. blackbox([prom/blackbox-exporter](https://hub.docker.com/r/prom/blackbox-exporter))-[14792]
       1. 监控对象: http、https、tcp端点，ssl的过期时间
-   5. mysql-[[prom/mysqld-exporter](https://hub.docker.com/r/prom/mysqld-exporter)]-[7362]
+   5. mysql-[[prom/mysqld-exporter](https://hub.docker.com/r/prom/mysqld-exporter)]-[14934]
    6. redis, [点击查看几种方式的区别](https://redisgrafana.github.io/intro/)
       1. (推荐)grafana插件方式: [[redis-datasource](https://grafana.com/grafana/plugins/redis-datasource/)]-[12776]
       2. exporter方式: [[oliver006/redis_exporter](https://hub.docker.com/r/oliver006/redis_exporter)]-[763]
@@ -37,6 +37,15 @@
         2. 改之后
            - 触发时间: `{{ (.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}`
     3. 这样接收到告警的那一端时间显示就是对的了
+6. 关于告警值小数点后面的数字过多的问题
+   1. 假设规则: "Disk is almost full (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+   2. 默认情况下VALUE的值是这种格式的 `1.3009774758313586`
+   3. 支持三种转换方法: `{{ printf "%.2f" $value }}` 或 `{{ $value | printf "%.2f" }}` 或 `{{ humanize $value }}`
+   4. 使用第一种方法之后
+      - 规则: "Disk is almost full (< 10% left)\n  VALUE = {{ printf \"%.2f\" $value }}\n  LABELS = {{ $labels }}"
+      - VALUE的值: `1.30`
+   5. 这样接收到告警的那一端数值就是转换过的了
+
 
 下一步:
 
@@ -51,6 +60,7 @@
    6. ingress-nginx-[[参考](https://github.com/kubernetes/ingress-nginx/tree/master/deploy/prometheus)]-[9614]
    7. nginx-log-[EFG](./docs/nginx.md)-[14913]
    8. elasticsearch-[[justwatchcom/elasticsearch_exporter](https://github.com/justwatchcom/elasticsearch_exporter)]-[6483]
+   9. vmware-[[pryorda/vmware_exporter](https://github.com/pryorda/vmware_exporter)]
 2. PromQL如何使用
 3. Alert告警规则如何配置
 4. Grafana图表如何配置

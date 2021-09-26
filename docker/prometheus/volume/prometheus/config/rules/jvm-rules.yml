@@ -1,0 +1,22 @@
+# https://awesome-prometheus-alerts.grep.to/rules
+groups:
+# jvm
+- name: jvm
+  rules:
+  - alert: JvmErrorLogEvents
+    expr: increase(logback_events_total{level="error"}[3m]) > 0
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: "JVM error log events  (instance {{ $labels.instance }})"
+      description: "The JVM error log event is out of limit (> 0)\n  VALUE = {{ $value }}\n  APPLICATION: {{ $labels.application }}"
+
+  - alert: JvmMemoryFillingUp
+    expr: (sum by (application,instance)(jvm_memory_used_bytes{area="heap"}) / sum by (application,instance)(jvm_memory_max_bytes{area="heap"})) * 100 > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "JVM memory filling up (instance {{ $labels.instance }})"
+      description: "JVM memory is filling up (> 80%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

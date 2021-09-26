@@ -1,5 +1,5 @@
 # prometheus-server
-- targets: ['node-prom:9100']
+- targets: ['172.17.0.1:9100']
   labels: {type: node, hostname: prometheus}
 - targets: ['alertmanager:9093']
   labels: {type: alertmanager, hostname: prometheus}

@@ -1,4 +1,10 @@
 """
+# 背景: 原始结构: 附件是按项目目录存放，目标结构: 附件按所属人目录存放
+
+# 1. 从数据库里查询出附件信息并保存在cvs中
+# 2. 从cvs获取源路径，文件名和所属人
+# 3. 定义输出路径，将目标文件放到指定目录中
+
 def a - read_csv; return dict
 def b - file_action; return info
 def c - load_a[dict]; use_b

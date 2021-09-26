@@ -1,4 +1,4 @@
-#!/bin/bash
+w#!/bin/bash
 # 定时处理
 # 大小处理
 # oss

@@ -1,0 +1,32 @@
+# https://awesome-prometheus-alerts.grep.to/rules
+groups:
+# domain
+- name: domain
+  rules:
+  - alert: DomainExpiring
+    expr: domain_expiry_days < 15
+    for: 0m
+    labels:
+      severity: info
+    annotations:
+      description: 'Domain {{ $labels.instance }} will expire in less than 15 days'
+      summary: '{{ $labels.instance }}: domain is expiring\n  VALUE = {{ $value }}'
+
+  - alert: DomainExpiring
+    expr: domain_expiry_days < 5
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      description: 'Domain {{ $labels.instance }} will expire in less than 5 days'
+      summary: '{{ $labels.instance }}: domain is expiring\n  VALUE = {{ $value }}'
+
+  - alert: DomainExpired
+    expr: domain_expiry_days <= 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      description: 'Domain {{ $labels.instance }} expire has expired already'
+      summary: '{{ $labels.instance }}: domain has expired already\n  VALUE = {{ $value }}'
+
