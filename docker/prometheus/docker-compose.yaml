@@ -44,8 +44,7 @@ services:
       - "9093:9093"
     volumes:
       - "./volume/alertmanager/data:/data"
-      - "./volume/alertmanager/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml"
-      - "./volume/alertmanager/config/wechat.tmpl:/etc/alertmanager/templates/wechat.tmpl"
+      - "./volume/alertmanager/config:/etc/alertmanager"
     networks:
       - ops
 

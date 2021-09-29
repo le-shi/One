@@ -3,7 +3,7 @@ groups:
 # blackbox-exporter
 - name: Blackbox
   rules:
-  - alert: BlackboxProbeFailed
+  - alert: 黑盒探针失败
     expr: probe_success == 0
     for: 0m
     labels:
@@ -12,7 +12,7 @@ groups:
       summary: "Blackbox probe failed (instance {{ $labels.instance }})"
       description: "Probe failed\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: BlackboxSlowProbe
+  - alert: 黑盒探针响应过慢
     expr: avg_over_time(probe_duration_seconds[1m]) > 1
     for: 1m
     labels:
@@ -21,7 +21,7 @@ groups:
       summary: "Blackbox slow probe (instance {{ $labels.instance }})"
       description: "Blackbox probe took more than 1s to complete\n  VALUE = {{ printf \"%.2f\" $value }}s\n  LABELS = {{ $labels }}"
 
-  - alert: BlackboxProbeHttpFailure
+  - alert: 黑盒 HTTP 探针失败
     expr: probe_http_status_code <= 199 OR probe_http_status_code >= 400
     for: 0m
     labels:
@@ -30,7 +30,7 @@ groups:
       summary: "Blackbox probe HTTP failure (instance {{ $labels.instance }})"
       description: "HTTP status code is not 200-399\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: BlackboxSslCertificateWillExpireSoon
+  - alert: 黑盒检测-SSL证书将要过期(<15天)
     expr: (probe_ssl_earliest_cert_expiry - time() < 86400 * 15) / 86400
     for: 0m
     labels:
@@ -39,7 +39,7 @@ groups:
       summary: "Blackbox SSL certificate will expire soon (instance {{ $labels.instance }})"
       description: "SSL certificate expires in 15 days\n  VALUE = {{ printf \"%.2f\" $value }}day\n  LABELS = {{ $labels }}"
 
-  - alert: BlackboxSslCertificateWillExpireSoon
+  - alert: 黑盒检测-SSL证书将要过期(<3天)
     expr: (probe_ssl_earliest_cert_expiry - time() < 86400 * 3) / 86400
     for: 0m
     labels:
@@ -48,7 +48,7 @@ groups:
       summary: "Blackbox SSL certificate will expire soon (instance {{ $labels.instance }})"
       description: "SSL certificate expires in 3 days\n  VALUE = {{ printf \"%.2f\" $value }}day\n  LABELS = {{ $labels }}"
 
-  - alert: BlackboxSslCertificateExpired
+  - alert: 黑盒检测-SSL证书已经过期
     expr: probe_ssl_earliest_cert_expiry - time() <= 0
     for: 0m
     labels:
@@ -57,7 +57,7 @@ groups:
       summary: "Blackbox SSL certificate expired (instance {{ $labels.instance }})"
       description: "SSL certificate has expired already\n  VALUE = {{ printf \"%.2f\" $value }}day\n  LABELS = {{ $labels }}"
 
-  - alert: BlackboxProbeSlowHttp
+  - alert: 黑盒 HTTP 探针响应过慢
     expr: avg_over_time(probe_http_duration_seconds[1m]) > 1
     for: 1m
     labels:
@@ -66,7 +66,7 @@ groups:
       summary: "Blackbox probe slow HTTP (instance {{ $labels.instance }})"
       description: "HTTP request took more than 1s\n  VALUE = {{ printf \"%.2f\" $value }}s\n  LABELS = {{ $labels }}"
 
-  - alert: BlackboxProbeSlowPing
+  - alert: 黑盒 Ping 探针响应过慢
     expr: avg_over_time(probe_icmp_duration_seconds[1m]) > 1
     for: 1m
     labels:

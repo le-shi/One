@@ -1,0 +1,23 @@
+{{ define "email.default.html" }}
+{{- if gt (len .Alerts.Firing) 0 -}}{{ range .Alerts }}
+== 警告 ==<br>
+监控机: {{ .Labels.environment }}<br>
+类型: {{ .Labels.alertname }}<br>
+级别: {{ .Labels.severity }}<br>
+主机: {{ .Labels.hostname }}<br>
+概要: {{ .Annotations.summary }}<br>
+描述: {{ .Annotations.description }}<br>
+触发时间: {{ (.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}<br>
+{{ end }}{{ end -}}
+{{- if gt (len .Alerts.Resolved) 0 -}}{{ range .Alerts }}
+== 恢复 ==<br>
+监控机: {{ .Labels.environment }}<br>
+类型: {{ .Labels.alertname }}<br>
+级别: {{ .Labels.severity }}<br>
+主机: {{ .Labels.hostname }}<br>
+概要: {{ .Annotations.summary }}<br>
+描述: {{ .Annotations.description }}<br>
+触发时间: {{ (.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}<br>
+恢复时间: {{ (.EndsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}<br>
+{{ end }}{{ end -}}
+{{- end }}

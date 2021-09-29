@@ -3,7 +3,7 @@ groups:
 # prometheus/mysqld_exporter
 - name: mysql
   rules:
-  - alert: MysqlDown
+  - alert: MySQL下线
     expr: mysql_up == 0
     for: 0m
     labels:
@@ -12,7 +12,7 @@ groups:
       summary: "MySQL down (instance {{ $labels.instance }})"
       description: "MySQL instance is down on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: MysqlTooManyConnections(>80%)
+  - alert: MySQL连接数过多(>80%)
     expr: avg by (instance,hostname) (rate(mysql_global_status_threads_connected[1m])) / avg by (instance,hostname) (mysql_global_variables_max_connections) * 100 > 80
     for: 2m
     labels:
@@ -21,7 +21,7 @@ groups:
       summary: "MySQL too many connections (> 80%) (instance {{ $labels.instance }})"
       description: "More than 80% of MySQL connections are in use on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: MysqlHighThreadsRunning(>60%)
+  - alert: MySQL运行状态的连接数过多(>60%)
     expr: avg by (instance,hostname) (rate(mysql_global_status_threads_running[1m])) / avg by (instance,hostname) (mysql_global_variables_max_connections) * 100 > 60
     for: 2m
     labels:
@@ -30,7 +30,7 @@ groups:
       summary: "MySQL high threads running (instance {{ $labels.instance }})"
       description: "More than 60% of MySQL connections are in running state on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: MysqlSlaveIoThreadNotRunning
+  - alert: MySQL Slave IO线程停止
     expr: mysql_slave_status_master_server_id > 0 and ON (instance,hostname) mysql_slave_status_slave_io_running == 0
     for: 0m
     labels:
@@ -39,7 +39,7 @@ groups:
       summary: "MySQL Slave IO thread not running (instance {{ $labels.instance }})"
       description: "MySQL Slave IO thread not running on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: MysqlSlaveSqlThreadNotRunning
+  - alert: MySQL Slave Sql线程停止
     expr: mysql_slave_status_master_server_id > 0 and ON (instance,hostname) mysql_slave_status_slave_sql_running == 0
     for: 0m
     labels:
@@ -48,7 +48,7 @@ groups:
       summary: "MySQL Slave SQL thread not running (instance {{ $labels.instance }})"
       description: "MySQL Slave SQL thread not running on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: MysqlSlaveReplicationLag
+  - alert: MySQL Slave 复制延迟(>30s)
     expr: mysql_slave_status_master_server_id > 0 and ON (instance,hostname) (mysql_slave_status_seconds_behind_master - mysql_slave_status_sql_delay) > 30
     for: 1m
     labels:
@@ -57,29 +57,83 @@ groups:
       summary: "MySQL Slave replication lag (instance {{ $labels.instance }})"
       description: "MySQL replication lag on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: MysqlSlowQueries
+  - alert: MySQL出现慢查询
     expr: increase(mysql_global_status_slow_queries[1m]) > 0
     for: 2m
     labels:
       severity: warning
     annotations:
       summary: "MySQL slow queries (instance {{ $labels.instance }})"
-      description: "MySQL server mysql has some new slow query.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      description: "MySQL 服务有一些新的慢查询操作.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: MysqlInnodbLogWaits
+  - alert: MySQL InnoDB 日志等待写入
     expr: rate(mysql_global_status_innodb_log_waits[15m]) > 10
     for: 0m
     labels:
       severity: warning
     annotations:
       summary: MySQL InnoDB log waits (instance {{ $labels.instance }})
-      description: "MySQL innodb log writes stalling\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      description: "MySQL Innodb 日志写异常\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: MysqlRestarted
+  - alert: MySQL重启提示
     expr: mysql_global_status_uptime < 60
     for: 0m
     labels:
       severity: info
     annotations:
-      summary: "MySQL restarted (instance {{ $labels.instance }})"
-      description: "MySQL has just been restarted, less than one minute ago on {{ $labels.instance }}.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "MySQL 刚刚重启啦 (instance {{ $labels.instance }})"
+      description: "MySQL 刚刚重启，不到一分钟前 {{ $labels.instance }}.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: MySQL打开文件数预警
+    expr: mysql_global_status_innodb_num_open_files > (mysql_global_variables_open_files_limit) * 0.75
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MySQL打开文件数量偏高 (instance {{ $labels.instance }})"
+      description: "MySQL已经打开的文件数量超过系统可用的75%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: MySQL读取缓存区预警
+    expr: mysql_global_variables_read_buffer_size > mysql_global_variables_slave_max_allowed_packet
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "MySQL 数据包最大限制 (instance {{ $labels.instance }})"
+      description: "MySQL 读取缓存区超过数据包最大限制\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: MySQL InnoDB 强制恢复已启用
+    expr: mysql_global_variables_innodb_force_recovery != 0
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MySQL InnoDB 强制恢复已启用 (instance {{ $labels.instance }})"
+      description: "MySQL InnoDB 强制恢复已启用\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: MySQL Binlog 已禁用
+    expr: mysql_global_variables_log_bin != 1
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MySQL Binlog 已禁用 (instance {{ $labels.instance }})"
+      description: "MySQL Binlog 已禁用\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: MySQL 从机表现落后于主机
+    expr: rate(mysql_slave_status_seconds_behind_master[1m]) >30
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MySQL 从机表现落后于主机 (instance {{ $labels.instance }})"
+      description: "MySQL 从机表现落后于主机\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: MySQL 从机权限不是只读
+    expr: mysql_global_variables_read_only != 0
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MySQL 从机权限不是只读 (instance {{ $labels.instance }})"
+      description: "MySQL 从机权限不是只读\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

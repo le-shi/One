@@ -3,23 +3,23 @@ groups:
 # ceph本身的prometheus插件
 - name: ceph
   rules:
-  - alert: CephState
+  - alert: Ceph 状态
     expr: ceph_health_status != 0
     for: 0m
     labels:
       severity: critical
     annotations:
-      summary: "Ceph State (instance {{ $labels.instance }})"
-      description: "Ceph instance unhealthy\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "Ceph 状态 (instance {{ $labels.instance }})"
+      description: "Ceph 实例不健康\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: CephMonitorClockSkew
+  - alert: Ceph 监视器时钟偏差
     expr: abs(ceph_monitor_clock_skew_seconds) > 0.2
     for: 2m
     labels:
       severity: warning
     annotations:
-      summary: "Ceph monitor clock skew (instance {{ $labels.instance }})"
-      description: "Ceph monitor clock skew detected. Please check ntp and hardware clock settings\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "Ceph 监视器时钟偏差 (instance {{ $labels.instance }})"
+      description: "检测到 Ceph 监视器时钟偏差。请检查ntp和硬件时钟设置\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: CephMonitorLowSpace
     expr: ceph_monitor_avail_percent < 10
@@ -30,32 +30,41 @@ groups:
       summary: "Ceph monitor low space (instance {{ $labels.instance }})"
       description: "Ceph monitor storage is low.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: CephOsdDown
+  - alert: Ceph的Osd节点挂了
     expr: ceph_osd_up == 0
     for: 0m
     labels:
       severity: critical
     annotations:
-      summary: "Ceph OSD Down (instance {{ $labels.instance }})"
-      description: "Ceph Object Storage Daemon Down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "Ceph的Osd节点挂了 (instance {{ $labels.instance }})"
+      description: "Ceph 对象存储守护进程关闭\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: CephHighOsdLatency
+  - alert: Ceph Mon节点故障
+    expr: sum(ceph_mon_quorum_status == 1) / sum(ceph_mon_quorum_status) < 0.5
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Ceph Mon 节点故障 (instance {{ $labels.instance }})"
+      description: "Ceph Mon 法定人数过半故障\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: Ceph OSD 高延迟
     expr: ceph_osd_perf_apply_latency_seconds > 5
     for: 1m
     labels:
       severity: warning
     annotations:
-      summary: "Ceph high OSD latency (instance {{ $labels.instance }})"
-      description: "Ceph Object Storage Daemon latency is high. Please check if it doesn't stuck in weird state.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "Ceph OSD 高延迟 (instance {{ $labels.instance }})"
+      description: "Ceph 对象存储守护进程延迟很高。请检查它是否没有卡在奇怪的状态。\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: CephOsdLowSpace
+  - alert: Ceph OSD 空间过低
     expr: ceph_osd_utilization > 90
     for: 2m
     labels:
       severity: warning
     annotations:
-      summary: "Ceph OSD low space (instance {{ $labels.instance }})"
-      description: "Ceph Object Storage Daemon is going out of space. Please add more disks.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "Ceph OSD 空间过低 (instance {{ $labels.instance }})"
+      description: "Ceph 对象存储守护进程空间不足(<10%)。请添加更多磁盘。\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: CephOsdReweighted
     expr: ceph_osd_weight < 1
@@ -63,8 +72,8 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Ceph OSD reweighted (instance {{ $labels.instance }})"
-      description: "Ceph Object Storage Daemon takes too much time to resize.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      summary: "Ceph OSD 重新分配权重 (instance {{ $labels.instance }})"
+      description: "Ceph 对象存储守护进程需要太多时间来调整大小。\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   - alert: CephPgDown
     expr: ceph_pg_down > 0

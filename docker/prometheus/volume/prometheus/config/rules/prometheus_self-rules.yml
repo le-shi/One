@@ -12,7 +12,7 @@ groups:
       summary: "Prometheus job missing (instance {{ $labels.instance }})"
       description: "A Prometheus job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: PrometheusTargetMissing
+  - alert: 监控目标失联
     expr: up == 0
     for: 0m
     labels:

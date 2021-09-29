@@ -3,7 +3,7 @@ groups:
 # oliver006/redis_exporter
 - name: redis
   rules:
-  - alert: RedisDown
+  - alert: Redis下线
     expr: redis_up == 0
     for: 0m
     labels:
@@ -12,7 +12,7 @@ groups:
       summary: "Redis down (instance {{ $labels.instance }})"
       description: "Redis instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: RedisMissingMaster
+  - alert: Redis Master 节点丢失
     expr: (count(redis_instance_info{role="master"}) or vector(0)) < 1
     for: 0m
     labels:
@@ -21,17 +21,16 @@ groups:
       summary: "Redis missing master (instance {{ $labels.instance }})"
       description: "Redis cluster has no node marked as master.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-# cluster中不适用
-#  - alert: RedisTooManyMasters
-#    expr: count(redis_instance_info{role="master"}) > 1
-#    for: 0m
-#    labels:
-#      severity: critical
-#    annotations:
-#      summary: "Redis too many masters (instance {{ $labels.instance }})"
-#      description: "Redis cluster has too many nodes marked as master.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  - alert: Redis Master 的节点太多了
+    expr: count(redis_instance_info{role="master"}) > 3
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis too many masters (instance {{ $labels.instance }})"
+      description: "Redis cluster has too many nodes marked as master.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: RedisDisconnectedSlaves
+  - alert: Redis Slave 断开连接
     expr: count without (instance, job) (redis_connected_slaves) - sum without (instance, job) (redis_connected_slaves) - 1 > 1
     for: 0m
     labels:
@@ -40,7 +39,7 @@ groups:
       summary: "Redis disconnected slaves (instance {{ $labels.instance }})"
       description: "Redis not replicating for all slaves. Consider reviewing the redis replication status.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: RedisReplicationBroken
+  - alert: Redis 复制中断
     expr: delta(redis_connected_slaves[1m]) < 0
     for: 0m
     labels:
@@ -49,7 +48,7 @@ groups:
       summary: "Redis replication broken (instance {{ $labels.instance }})"
       description: "Redis instance lost a slave\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: RedisClusterFlapping
+  - alert: RedisCluster 副本连接识别变更
     expr: changes(redis_connected_slaves[1m]) > 1
     for: 2m
     labels:
@@ -59,7 +58,7 @@ groups:
       description: "Changes have been detected in Redis replica connection. This can occur when replica nodes lose connection to the master and reconnect (a.k.a flapping).\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   # 需要开启rdb备份
-  - alert: RedisMissingBackup
+  - alert: Redis RDB 备份中断
     expr: time() - redis_rdb_last_save_timestamp_seconds > 60 * 60 * 24
     for: 0m
     labels:
@@ -69,7 +68,7 @@ groups:
       description: "Redis has not been backuped for 24 hours\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   # The exporter must be started with --include-system-metrics flag or REDIS_EXPORTER_INCL_SYSTEM_METRICS=true environment variable.
-  - alert: RedisOutOfSystemMemory(>90%)
+  - alert: Redis 内存不足(>90%)
     expr: redis_memory_used_bytes / redis_total_system_memory_bytes * 100 > 90
     for: 2m
     labels:
@@ -88,29 +87,29 @@ groups:
   #     description: "Redis is running out of configured maxmemory (> 90%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
   # 连接数根据自己的环境修改
-  - alert: RedisTooManyConnections
+  - alert: Redis 的连接数过多(>300)
     expr: redis_connected_clients > 300
     for: 2m
     labels:
       severity: warning
     annotations:
       summary: "Redis too many connections (instance {{ $labels.instance }})"
-      description: "Redis instance has too many connections\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      description: "Redis 实例有太多的连接\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: RedisNotEnoughConnections
+  - alert: Redis 的连接数不足(<5)
     expr: redis_connected_clients < 5
     for: 2m
     labels:
       severity: warning
     annotations:
       summary: "Redis not enough connections (instance {{ $labels.instance }})"
-      description: "Redis instance should have more connections (> 5)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      description: "Redis 实例应该有更多的连接 (> 5)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - alert: RedisRejectedConnections
+  - alert: Redis 连接被拒绝
     expr: increase(redis_rejected_connections_total[1m]) > 0
     for: 0m
     labels:
       severity: critical
     annotations:
       summary: "Redis rejected connections (instance {{ $labels.instance }})"
-      description: "Some connections to Redis has been rejected\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      description: "一些与 Redis 的连接被拒绝\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

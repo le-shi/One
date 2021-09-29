@@ -4,14 +4,18 @@
 - targets: ['alertmanager:9093']
   labels: {type: alertmanager, hostname: prometheus}
 
-- targets: ['mysqlexporter:9104']
+- targets: ['mysql-exporter:9104']
   labels: {type: mysqld, hostname: prometheus}
-- targets: ['redis_exporter:9121']
+- targets: ['redis-exporter:9121']
   labels: {type: redis, hostname: prometheus}
 
 # - targets: ['rabbitmq_ip:15692']
-#   labels: {type: rabbitmq, hostname: prometheus}
+#   labels: {type: rabbitmq, hostname: rabbitmq_ip}
 # - targets: ['openstack-exporter:9180']
-#   labels: {type: openstack, hostname: prometheus}
-# - targets: ['ceph_ip:9283']
-#   labels: {type: ceph, hostname: prometheus}
+#   labels: {type: openstack, hostname: openstack-exporter}
+
+# 有多个ceph-mgr时，就写多个mgr的地址，因为 HTTP 监听的服务同时只在一个mgr上运行，其他都是备用节点
+# - targets: ['ceph-mgr-1_ip:9283']
+#   labels: {type: ceph, hostname: ceph-mgr-1_ip}
+# - targets: ['ceph-mgr-2_ip:9283']
+#   labels: {type: ceph, hostname: ceph-mgr-2_ip}

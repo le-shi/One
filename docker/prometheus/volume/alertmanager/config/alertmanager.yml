@@ -2,6 +2,16 @@
 global:
   # 处理超时时间,默认为5min
   resolve_timeout: 5m
+  # 邮箱smtp服务器代理
+  smtp_smarthost: 'smtp.163.com:25'
+  # 发送者邮箱名称
+  smtp_from: 'xxx@163.com'
+  # 认证: 邮箱账号
+  smtp_auth_username: 'xxx@163.com'
+  # 认证: 发送邮箱的授权码而不是登录密码
+  smtp_auth_password: 'xxxxxx'
+  # 是否验证邮箱的tls(default: true)
+  smtp_require_tls: false
 
 # 模板路径
 templates:
@@ -9,22 +19,28 @@ templates:
 
 # 定义路由树信息
 route:
-  # 报警分组
-  group_by: [alertname]
+  # 报警分组，按 alertname(告警名称) 、 instance(实例名称) 、 type(监控类型) 三个条件(并)进行分组
+  group_by: [alertname,instance,type]
   # 第一次等待多长时间发送一组警报的通知,在组内等待所配置的时间，如果同组内，30秒内出现相同报警，在一个组内出现。
   group_wait: 30s
-  # 如果组内内容不变化，合并为一条警报信息，3m后发送。
+  # 组报警间隔时间，期间如有新来的报警，则合并为一条警报信息，3m后发送。
   group_interval: 3m
-  # 发送报警间隔，如果指定时间内没有修复，则重新发送报警。
+  # 重新发送报警间隔，如果指定时间内没有修复，则重新发送报警。
   repeat_interval: 1h
-  # 定义告警接收分组名称 one_wx.告警会自动从上级路由走到下级路由，下级路由会覆盖上级路由的设置,同级路由加上continue: true 才会继续往之后的同级路由匹配，并给所有匹配到的同级路由的receiver发信息。
+  # 定义告警接收者分组名称 one_wx.告警会自动从上级路由走到下级路由，下级路由会覆盖上级路由的设置,同级路由加上continue: true 才会继续往之后的同级路由匹配，并给所有匹配到的同级路由的receiver发信息。
+  # 如果配置了routes，符合匹配规则的告警只会发送到routes下面的接受者 one_email ，不符合匹配规则的才会发给默认的 one_wx ，这时不管规则匹不匹配都想让 onw_wx 和 one_email 同时收到告警通知，除了默认的 one_wx ，还需要在routes下面增加接收者是 one_wx 的配置，同时 continue 必须设置为 true .
+  # 注意: 当一条告警的分组有n个接受者时，那么这个分组会显示n个重复的，这就是在 Alertmanager 的web端看到多个重复分组的原因
   receiver: 'one_wx'
   # 定义消息发送的路由
   routes:
-  - match:
+  - receiver: 'one_email'
     # continue 匹配到此规则的告警能继续同级 routes 匹配，并对同级中匹配到的所有receiver发送告警(defailt: false)
     continue: true
-    receiver: 'one_wx'
+    # 警报必须满足以匹配节点的匹配器列表，注意 match 和 match_re 在将来会被弃用
+    matchers:
+    - severity=~"info|warning|critical"
+  - receiver: 'one_wx'
+    continue: true
 
 # 定义告警接收分组的列表
 receivers:
@@ -32,6 +48,7 @@ receivers:
 - name: 'one_wx'
   # 微信配置 - 采用企业微信的方式通过告警
   wechat_configs:
+    # 发送恢复通知(default: false)
   - send_resolved: true
     # #企业ID，登录后台--> 我的企业--> 底部企业ID
     corp_id: 'wwf1d319ac8932285e6'
@@ -43,18 +60,26 @@ receivers:
     to_user: '@all'
     # 接收告警消息的部门Id(在"组织架构", 选中部门名称后，点击名称右侧的三个点, 在弹出的二级菜单显示 "部门ID: 1"), 需要在自建应用的"可见范围"设置需要接受告警消息的部门
     # to_party: 24
-    # 指定告警信息模板
-    # message: '{{ template "<这里写的是模板文件 define 的名字: template-name>" }}'
+    # 指定 企业微信 告警信息模板(default: message: '{{ template "wechat.default.message" . }}')
+    # message: '{{ template "这里写的是模板文件 define 的名字: <template-name>" . }}'
+- name: 'one_email'
+  email_configs:
+  - to: 'xxxx@xx.com'
+    # 发送恢复通知
+    send_resolved: true
+    # 指定 邮件 告警信息模板(default: html: '{{ template "email.default.html" . }}')
+    # html: '{{ template "这里写的是模板文件 define 的名字: <template-name>" . }}'
 
-# 抑制规则的列表
-# inhibit_rules:
-# # 源标签警报触发时抑制含有目标标签的警报，在当前警报匹配 severity: 'critical'
-#   - source_match:
-#         # 此处的抑制匹配一定在最上面的route中配置不然，会提示找不key
-#       severity: 'critical'
-#     target_match:
-#       # 目标标签值正则匹配，可以是正则表达式如: ".*MySQL.*"
-#       severity: 'warning'
-#     # 确保这个配置下的标签内容相同才会抑制，也就是说警报中必须有这三个标签值才会被抑制。
-#     equal: ['alertname', 'dev', 'instance']
-
+# 禁止规则允许将一组警报静音，因为另一个警报是 firing  ？？没太理解
+# 如果相同的警报，已经有 critical 级别的，我们使用它来静音任何 warning 级别的
+# 注意: 使用equal时，要避免使用标签的值包含中文的
+# 抑制(禁止)规则的列表
+inhibit_rules:
+  # 源标签警报触发时抑制含有目标标签的警报，在当前警报匹配 severity="critical" 时，禁止发送 severity="warning" 级别的警告
+  - source_matchers: [ severity="critical" ]
+    target_matchers: [ severity="warning" ]
+    # 确保配置的标签的值内容相同才会抑制，也就是说不同级别的警报中这些标签的值必须相同才会被抑制
+    equal: ['job', 'type', 'instance']
+  - source_matchers: [ alertname="黑盒 HTTP 探针失败" ]
+    target_matchers: [ alertname="黑盒探针失败" ]
+    equal: ['job', 'instance']
