@@ -117,9 +117,14 @@
    + 使用Tomcat/Tongweb运行war包
 1. 启动后，访问接口测试是否正常运行
 
-## 使用一个pom.xml文件同时构建jar和war
+---
 
-pom.xml参考
+# 使用一个pom.xml文件同时构建jar和war
+
+- pom.xml参考
+
+> SpringBoot 1.x版本不支持分层构建，使用时请去掉 `<layers><enabled>true</enabled></layers>` 的配置
+> SpringBoot 2.3版本不支持 war 的分层构建
 
 ```diff
 <?xml version="1.0" encoding="UTF-8"?>
@@ -127,13 +132,13 @@ pom.xml参考
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.zbxsoft.sc</groupId>
-    <artifactId>sc</artifactId>
-    <version>2.3.11-SNAPSHOT</version>
+    <groupId>com.app</groupId>
+    <artifactId>application</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 +    <packaging>${project.packaging}</packaging>
 
-    <name>sc</name>
-    <description>玄武库配置中心</description>
+    <name>application</name>
+    <description>应用名</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -218,9 +223,11 @@ pom.xml参考
 
 ```bash
 # 通过-P,--activate-profiles参数控制
-# 打jar包 (默认是jar)
+# 构建 jar 包 (默认是jar)
 mvn clean package
 mvn -P jar clean package
-# 打war包
+# 构建 war 包
 mvn -P war clean package
+# 同时构建 jar 和 war 包
+mvn clean package && mvn -P war package
 ```

@@ -301,7 +301,7 @@ export JOB_NAME=${JOB_NAME}
 
 dockerPush (){
   registryUrl=${1}
-  nameSpace=zbxsoft
+  nameSpace=application
   image=${imageName}
   
   if [[ ${imageName} == web ]];then
@@ -309,7 +309,7 @@ dockerPush (){
   fi
   docker build . -t $registryUrl/$nameSpace/$image:${serviceVersion}
   docker push $registryUrl/$nameSpace/$image:${serviceVersion}
-  docker save cr.zbxsoft.com/$nameSpace/$image:${serviceVersion} -o /tmp/${imageName}-${serviceVersion}.tar
+  docker save harbor.example.com/$nameSpace/$image:${serviceVersion} -o /tmp/${imageName}-${serviceVersion}.tar
   chmod 644 /tmp/${imageName}-${serviceVersion}.tar
   ls -lh /tmp/${imageName}-${serviceVersion}.tar
   if [[ ${serviceVersion} == 'license' ]]; then
@@ -323,7 +323,7 @@ dockerPush (){
 
 
 # main
-dockerPush harbor.code.com
+dockerPush harbor.example.com
 
 
 # echo "$[serviceVersion]"
