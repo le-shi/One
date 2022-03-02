@@ -46,8 +46,18 @@ Zabbix的主动模式和被动模式都是相对agent来说的。一般情况下
 
 ## 安装 proxy
 
+1. 在线安装
+
 ```bash
-# 依赖, 离线安装这个顺序来安装
+rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm
+sed -i 's@repo.zabbix.com@mirrors.aliyun.com/zabbix@g' /etc/yum.repos.d/zabbix.repo
+yum install zabbix-proxy-sqlite3
+```
+
+1. 离线安装
+
+```bash
+# 依赖, 这个顺序来安装
 net-snmp-libs-5.7.2-49.el7_9.1.x86_64.rpm
 OpenIPMI-libs-2.0.27-1.el7.x86_64.rpm
 OpenIPMI-2.0.27-1.el7.x86_64.rpm
@@ -57,12 +67,6 @@ libtool-ltdl-2.4.2-22.el7_3.x86_64.rpm
 unixODBC-2.3.1-14.el7.x86_64.rpm
 libevent-2.0.21-4.el7.x86_64.rpm
 zabbix-proxy-sqlite3-5.0.20-1.el7.x86_64.rpm
-
-rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm
-sed -i 's@repo.zabbix.com@mirrors.aliyun.com/zabbix@g'  /etc/yum.repos.d/zabbix.repo
-yum install zabbix-proxy-sqlite3
-# wget -Nc https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-proxy-sqlite3-5.0.20-1.el7.x86_64.rpm
-# rpm -ivh zabbix-proxy-sqlite3-5.0.20-1.el7.x86_64.rpm
 ```
 
 ## 配置 proxy
