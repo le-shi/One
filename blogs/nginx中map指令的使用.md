@@ -141,7 +141,7 @@
     http {
         ...
         # 当args为id=220时，cust_upstream变量设置为127.0.0.1
-        # 其他条件时，cust_upstream变量设置为192.168.13.77
+        # 其他条件时，cust_upstream变量设置为192.168.13.77,nginx的机器IP就是13.77
         map $args $cust_upstream {
             default 192.168.13.77;
             id=220 127.0.0.1;
@@ -194,7 +194,7 @@
     X-debug-message: 192.168.13.77
     ```
 
-# Nginx根据日期和端口号打印日志到指定文件
+# Nginx根据日期和端口号打印日志到带有日期和端口的日志文件
 
 
 1. 添加配置文件
@@ -203,6 +203,7 @@
     # 使用map实现
     http {
         ...
+        # 自定义日志格式跟map没有关系，只是为了看日志时结构清晰
         log_format json '{"@timestamp":"$time_iso8601",'
                  '"server_addr":"$server_addr",'
                  '"server_name":"$server_name",'
@@ -226,7 +227,7 @@
 
           default 'date-not-found';
         }
-        # 日志文件名字采用curr_data和server_port变量，每一天不用端口的请求，都会记录到日期和端口对应的log里
+        # 日志文件名字采用curr_data和server_port变量，每一天不同端口的请求，都会记录到日期和端口对应的log里
         # 配置加载生效后，nginx只有收到请求才会生成 access_json-2021-01-01-80.log 这样名称的日志文件
         access_log /var/log/nginx/access_json-$curr_date-$server_port.log json;
         ...
@@ -252,7 +253,7 @@
     nginx -t && nginx -s reload
     ```
 
-3. 开始之前，检查带有日期和端口的日志文件没有生成
+3. 请求之前，检查带有日期和端口的日志文件没有生成
 
     ```bash
     ls -t /var/log/nginx/

@@ -254,7 +254,18 @@ RewriteRule -> if 处理rewrite规则
 Deny from all -> deny all 指定路径拒绝
 Header -> add_header 添加http头信息
 
+Apache和Nginx规则的对应关系
+Apache的RewriteCond对应Nginx的if
+Apache的RewriteRule对应Nginx的rewrite
+Apache的[R]对应Nginx的redirect
+Apache的[P]对应Nginx的last
+Apache的[R,L]对应Nginx的redirect
+Apache的[P,L]对应Nginx的last
+Apache的[PT,L]对应Nginx的last
 ```
+
+
+
 
 ### 例子 1 - 带有网站目录的 Tomcat 反向代理
 

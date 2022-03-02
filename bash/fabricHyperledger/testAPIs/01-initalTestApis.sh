@@ -14,6 +14,8 @@ setFor (){
     ${funcName}
     if [ ${funcName} == setCreateChannel ];then exit;fi
     if [ ${funcName} == setInstantiateChainCode ];then exit;fi
+    # 2021年11月30日 - add
+    if [ ${funcName} == setBottom ];then exit;fi
   done
 }
 
@@ -41,7 +43,9 @@ setQueryChainCodes (){
   cat QueryChainCodes | sed -e "s/Org1/${OrgName}/g" -e "s/ORG1/${ORGNAME}/g" -e "s/org1/${orgName}/g"
 }
 
-
+setBottom(){
+  cat Bottom | sed -e "s/Org1/${OrgName}/g" -e "s/ORG1/${ORGNAME}/g" -e "s/org1/${orgName}/g"
+}
 
 
 echoFile (){
@@ -62,7 +66,8 @@ echoFile (){
   # #query chaincode  --no use
   # setFor setQueryChainCodes
   #
-  cat Bottom
+  # cat Bottom
+  setFor setBottom
 }
 
 echoFile > testAPIs.sh

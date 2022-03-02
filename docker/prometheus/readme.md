@@ -14,7 +14,7 @@
    1. 栗子: 类别-[exporter来源]-[Grafana Dashboard Id]
    2. prometheus-[自身监控]
    3. host-[[prom/node-exporter](https://hub.docker.com/r/prom/node-exporter)]-[8919,1856]
-      1. 监控对象: 主机，服务器的磁盘，内存，CPU，网络，Inode，运行时间，负载，TCP状态，文件描述符
+      1. 监控对象: 主机，服务器的磁盘，内存，CPU，网络，Inode，运行时间，负载，TCP状态，文件描述符，物理机温度
    4. blackbox([prom/blackbox-exporter](https://hub.docker.com/r/prom/blackbox-exporter))-[14792]
       1. 监控对象: http、https、tcp端点，ssl的过期时间
    5. mysql-[[prom/mysqld-exporter](https://hub.docker.com/r/prom/mysqld-exporter)]-[14934]
@@ -28,7 +28,9 @@
    10. jvm-[[MavenPlugin](./docs/jvm.md)]-[4701]
        1. 监控对象: java程序的jvm虚机使用情况
    11. domain-[[domain_exporter](https://github.com/le-shi/domain_exporter)]-[14605]
-       1. 监控对象: 域名的过期时间
+       1. 监控对象: 域名的到期时间
+   12. 自定义规则
+       1. ssh登录、DNS验证
 5. 关于报警时间的问题
     1. Prometheus 告警自定义模板的默认使用的是`UTC`时间
     2. 改成北京时间,其中 `Add 28800e9`  就是表示加8个小时。[28800e9为什么表示8小时?](https://www.google.com/search?q=28800e9%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A1%A8%E7%A4%BA8%E5%B0%8F%E6%97%B6%3F&oq=28800e9%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A1%A8%E7%A4%BA8%E5%B0%8F%E6%97%B6%3F&aqs=chrome..69i64j69i57.2040j0j1&sourceid=chrome&ie=UTF-8)
@@ -87,4 +89,63 @@ docker network create ops
 CREATE USER 'exporter'@'%' IDENTIFIED BY 'prometheus';
 GRANT PROCESS, REPLICATION CLIENT ON *.* TO 'exporter'@'%';
 GRANT SELECT ON performance_schema.* TO 'exporter'@'%';
+```
+
+---
+
+**自定义指标的使用**
+
+1. 准备自定义指标脚本(push_gateway.sh: 支持ssh登录人，dns校验)
+
+   chmod +x /usr/sbin/push_gateway.sh
+
+2. 配置服务.service
+
+```bash
+# cat > /usr/lib/systemd/system/push-gateway.service <<EOF
+[Unit]
+Description=push-gateway client
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/push_gateway.sh
+EOF
+```
+
+3. 配置服务.timer
+
+```bash
+# cat > /usr/lib/systemd/system/push-gateway.timer <<EOF
+[Unit]
+Description=push-gateway every 15s
+
+[Timer]
+# 定时器后指定的时间单位可以是：us(微秒), ms(毫秒), s(秒), m(分), h(时), d(天), w(周), month(月), y(年)。如果省略了单位，则表示使用默认单位‘秒’
+# 多少(OnActiveSec)时间后，开始运行
+OnActiveSec=30s
+# 连续运行两次之间的间隔时间
+OnUnitActiveSec=15s
+Unit=push-gateway.service
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+4. 启用计时器
+
+```bash
+# 重新加载配置
+systemctl daemon-reload
+# 启动定时器
+systemctl start push-gateway.timer
+# 设置开机启动
+systemctl enable push-gateway.timer
+```
+
+5. 查看
+
+```bash
+# 查看定时器，服务
+systemctl status push-gateway.timer push-gateway.service
 ```

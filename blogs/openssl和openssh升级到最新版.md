@@ -24,6 +24,8 @@
 
         ./config --prefix=/usr/local/openssl
 
+        # 确认当前操作系统版本
+        cat /etc/*se
         # 当操作系统是 Centos 7.x 时，使用此命令
         make -j $(nproc)
         # 当操作系统是 Centos 6.x 时，使用此命令
@@ -114,7 +116,7 @@
 
 1. 备份/etc/ssh目录
 
-        cp -rp /etc/ssh{,.bak}
+        /bin/cp -v --backup --suffix=-$(date +%FT%T) -rp /etc/ssh/* /etc/ssh.bak
 
 2. 必要软件的安装
 
@@ -144,8 +146,10 @@
 
         cd openssh-8.6p1
 
-        ./configure --prefix=/usr/local/openssh --sysconfdir=/etc/ssh  --with-openssl-includes=/usr/local/openssl/include --with-ssl-dir=/usr/local/openssl --with-zlib --with-md5-passwords   --with-pam
-        
+        ./configure --prefix=/usr/local/openssh --sysconfdir=/etc/ssh --with-openssl-includes=/usr/local/openssl/include --with-ssl-dir=/usr/local/openssl --with-zlib --with-md5-passwords --with-pam
+
+        # 确认当前操作系统版本
+        cat /etc/*se
         # 当操作系统是 Centos 7.x 时，使用此命令
         make -j $(nproc)
         # 当操作系统是 Centos 6.x 时，使用此命令
@@ -163,11 +167,15 @@
 
 2. 复制原先的配置文件
 
-        cp /etc/ssh.bak/sshd_config /etc/ssh/
+        /bin/cp -v --backup --suffix=-$(date +%FT%T) /etc/ssh.bak/sshd_config /etc/ssh/
+
+        注意: 配置文件 /etc/ssh/sshd_config
+        1. 从 8.8p1 版本开始 "PermitRootLogin no" 作为默认参数，也就是默认禁止root直接登录；如果需要root直接登录，要单独设置 "PermitRootLogin yes"
+        2. 从 8.8p1 版本开始，不支持 GSSAPIAuthentication 和 GSSAPICleanupCredentials ，请在配置文件中注释
 
 3. 在源码包中，把服务启动文件复制到系统路径中，赋予执行权限：
 
-        cp contrib/redhat/sshd.init /etc/init.d/sshd
+        /bin/cp -v --backup --suffix=-$(date +%FT%T) contrib/redhat/sshd.init /etc/init.d/sshd
 
         chmod +x /etc/init.d/sshd
 
@@ -214,8 +222,8 @@
 
 4. 使用新的二进制文件替换掉旧版本
 
-        cp -f /usr/local/openssh/bin/s* /usr/bin/
-        cp -f /usr/local/openssh/sbin/sshd /usr/sbin/
+        /bin/cp -v --backup --suffix=-$(date +%FT%T) /usr/local/openssh/bin/s* /usr/bin/
+        /bin/cp -v --backup --suffix=-$(date +%FT%T) /usr/local/openssh/sbin/sshd /usr/sbin/
 
 5. 重启 sshd 服务
 
@@ -233,6 +241,7 @@
 7. 新版本的ssh
 
         ssh -V
+        sshd -V
 
 ## 清理工作
 

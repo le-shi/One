@@ -489,6 +489,7 @@ tmpfs                     tmpfs     184M     0  184M   0% /run/user/1000
 注意:
 * 当文件系统的格式为xfs时，如果使用 resize2fs 命令进行扩容操作，就会提示 "找不到有效的文件系统超级块" ，并且不会对磁盘(lv)进行扩容，这时候需要使用 xfs_growfs 命令进行扩容操作: xfs_growfs /dev/mapper/vgyoyo-lvdata
 ，然后通过 df -hT 就可以看到扩容后的大小了
+* 执行lvm相关命令提示 "Couldn't create temporary archive name." 原因：原有的存储空间已经使用100%，无法挂载，须预留部分空间出来。解决办法：删掉其中无用文件、log日志继续操作即可。
 ```
 
 > 小结

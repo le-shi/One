@@ -880,17 +880,18 @@ services:
   nodeapp:
     container_name: nodeapp
     image: ${imageAddr}/nodeapp:${SamplesVersion}
-    # environment:
-    #   - rc_ip=ms.zbx.lab
+    environment:
+      - rc_ip=eureka
     #   - me_ip=docker-compose-nodeapp.yaml
     volumes:
       - ../artifacts:/home/node/app/artifacts/
       - ../config.js:/home/node/app/config.js
       - ../app/helper.js:/home/node/app/app/helper.js
+      - ../app/instantiate-chaincode.js:/home/node/app/app/instantiate-chaincode.js
       - ../kvstore:/home/node/app/kvstore/
       - /tmp:/tmp
     ports:
-      - 4000:4000    
+      - 4000:4000
     networks:
       microservices:
         # ipv4_address: 10.0.0.100
@@ -1426,6 +1427,10 @@ fabricInitalRunApp (){
   # sed -i "s/example.com/${domainName}/g" testAPIs.sh
   sed -i "s/affiliation: userOrg.toLowerCase() + '.department1'/affiliation: \'${unionOrderer}.\' + userOrg.toLowerCase(),\n\t\t\t\tmaxEnrollments: -1/" app/helper.js
   sed -i -e "s/60000/600000/g" -e "s/2-of/1-of/g" app/instantiate-chaincode.js
+
+  # 更改默认的机构名称
+  # sed -i -e "s/Org1MSP/Cust1MSP/g" -e "s/Org2MSP/Cust2MSP/g" app/instantiate-chaincode.js
+
   sed -i -e "s/artifacts_default/${networkName}/g" \
   -e "s|image: hyperledger/fabric-peer|image: ${imageAddr}/fabric-peer:${SamplesVersion}|g" artifacts/base.yaml
 
@@ -1435,10 +1440,17 @@ fabricInitalRunApp (){
   # 修改runApp.sh, 过滤容器fabric-ca, 避免误杀
   sed -i -e "s/docker ps -aq/docker ps -a | grep -Ev 'CONTAINER|fabric-ca' | awk '{print \$1}'/g" \
   -e 's|npm install|docker-compose -f ./artifacts/docker-compose-nodeapp.yaml up -d|g' \
-  -e "s|PORT=4000 node app|docker logs -f nodeapp|g" runApp.sh
+  -e "s|PORT=4000 node app||g" runApp.sh
+  echo "docker exec nodeapp sed -i 's/# nohup/nohup/' /docker-entrypoint.sh" >> runApp.sh
+  echo "echo \"Nodeapp Restarting...\"" >> runApp.sh
+  echo "docker restart nodeapp" >> runApp.sh
+  echo "echo \"Nodeapp logs\"" >> runApp.sh
+  echo "docker logs -f nodeapp" >> runApp.sh
 
   # 创建链码目录
   mkdir -pv artifacts/src/github.com/chain/go
+  # 上传自定义链码到链目录
+  # cp /root/chain.go artifacts/src/github.com/chain/go/chain.go
 
   # 生成nodeapp的启动文件
   fabricNewConfigNodeAppConfig

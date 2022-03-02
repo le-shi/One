@@ -76,7 +76,9 @@ fi
 # 发送消息模板
 # job名称 - 构建状态 - ${b_change_name}
 
-python /home/infra/wx_msg.py """任务: ${a_log_name} - ${a_log_id}
-结果: ${b_change_status}
-详情: ${b_change_action} ${b_change_name}"""
+# python /home/infra/wx_msg.py """任务: ${a_log_name} - ${a_log_id}
+# 结果: ${b_change_status}
+# 详情: ${b_change_action} ${b_change_name}"""
+
+/home/infra/notice_wechat.sh """任务: ${a_log_name} - ${a_log_id}\n结果: ${b_change_status}\n详情: ${b_change_action} ${b_change_name}"""
 

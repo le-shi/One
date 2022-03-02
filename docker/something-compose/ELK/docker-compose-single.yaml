@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  es:
+    container_name: es
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    restart: always
+    environment:
+      - node.name=es01
+      - cluster.name=docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      # 必须在 elasticsearch 中启用CORS，否则您的浏览器将因违反同源策略而拒绝 elasticsearch-head 的请求
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - ES_JAVA_OPTS="-Xms512m -Xmx512m"
+      - xpack.security.enabled=true
+      # user: elastic --变量不好使，需要进到容器里 ./bin/elasticsearch-setup-passwords auto
+      # - ELASTIC_PASSWORD="OJa1jSWo6g7sFiJAvCgq"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: "curl -sL http://localhost:9200 > /dev/null"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.14.0
+    container_name: kibana
+    environment:
+      - I18N_LOCALE=zh-CN
+      - TIMELION_ENABLED=true
+    volumes:
+      - ./volume/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - "5601:5601"
+
+volumes:
+  data01:
+    driver: local

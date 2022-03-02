@@ -7,7 +7,7 @@ networks:
 services:
   prometheus:
     container_name: prometheus
-    image: prom/prometheus:v2.27.1
+    image: prom/prometheus:v2.32.1
     hostname: prometheus-server
     restart: always
     ports:
@@ -24,6 +24,7 @@ services:
   pushgateway:
      container_name: pushgateway
      image: prom/pushgateway:v1.4.1
+     # --persistence.interval 允许指标暂存，默认保存5分钟，5分钟后，本地存储的指标会删除
      command: --persistence.file=/pushgateway/gateway.db --persistence.interval=3m
      volumes:
        - "./volume/pushgateway/data:/pushgateway"

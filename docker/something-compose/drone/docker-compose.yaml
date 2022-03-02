@@ -1,0 +1,50 @@
+version: "3"
+
+networks:
+  drone:
+    external: false
+
+services:
+  drone:
+    # image: drone/drone:2.8.0
+    image: cr.zbxsoft.com/3rd/drone:2.8.0
+    container_name: drone
+    environment:
+      # Gitea
+      # - DRONE_GITEA_SERVER=http://172.30.1.31:3000
+      # - DRONE_GITEA_CLIENT_ID=61f7bcf1-9312-465c-8d75-935d35b3e6c3
+      # - DRONE_GITEA_CLIENT_SECRET=z6HHI0oqlbbRgHP0vUyjExPwlRXP5Aylk9TXLIWKMhCW
+      # Gitlab
+      - DRONE_GITLAB_SERVER=http://gitlab.zbx.cn
+      - DRONE_GITLAB_CLIENT_ID=3f64d6a2643c0976152327c903a840af630e2ccd04cf75d2e39f0f64e4a7a944
+      - DRONE_GITLAB_CLIENT_SECRET=0609203a3e4a2f1fc6cd830f0bb8fd6fc020af25586c9afd972b541acf466326
+      - DRONE_RPC_SECRET=super-duper-secret
+      - DRONE_SERVER_HOST=172.30.1.31:4080
+      - DRONE_SERVER_PROTO=http
+    restart: always
+    networks:
+      - drone
+    volumes:
+      - ./drone/data:/var/lib/drone
+      # - /etc/timezone:/etc/timezone:ro
+      # - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "4080:80"
+      - "4443:443"
+
+  drone-runner-docker-1:
+    # image: drone/drone-runner-docker:1.8.0
+    image: cr.zbxsoft.com/3rd/drone-runner-docker:1.8.0
+    container_name: drone-runner-docker-1
+    environment:
+      - DRONE_RPC_PROTO=http
+      - DRONE_RPC_HOST=172.30.1.31:4080
+      - DRONE_RPC_SECRET=super-duper-secret
+      - DRONE_RUNNER_CAPACITY=2
+      - DRONE_RUNNER_NAME=my-docker-runner-1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "43000:3000"
+    networks:
+      - drone

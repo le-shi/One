@@ -14,7 +14,8 @@ CONTAINER_MYSQL_ROOT_PASSWORD=5tgb^YHN
 DUMP_DIRECTORY=/home/volume/mysql/backup
 # 定义脚本文件路径
 DUMP_SHELL=/tmp/dump.sh
-# 定义本地备份历史保留时长(天)
+# 定义本地备份历史保留时长(天=time,分钟=min)
+BACKUP_KEEP_TYPE=time
 BACKUP_KEEP_DAY=180
 # 定义备份命令
 ## --single-transaction 此选项将事务隔离模式设置为， REPEATABLE READ并START TRANSACTION在转储数据之前将SQL语句发送到服务器。它仅对诸如之类的事务表很有用InnoDB，因为这样，它在START TRANSACTION发布时就转储数据库的一致状态， 而不会阻塞任何应用程序。该--single-transaction选项和该 --lock-tables选项是互斥的
@@ -77,21 +78,28 @@ then
   then
     BACKUP_KEEP_DAY=7
   fi
+else
+  # 分钟级
+  BACKUP_KEEP_TYPE=min
+  # 1440分钟=24小时
+  BACKUP_KEEP_DAY=1440  
 fi
 
-find ${DUMP_DIRECTORY}/ -mtime +${BACKUP_KEEP_DAY} -exec rm -f {} \;
+# 清理历史备份
+# for i in $(find ${DUMP_DIRECTORY}/ -m${BACKUP_KEEP_TYPE} +${BACKUP_KEEP_DAY}); do if [[ -d ${i} ]]; then echo "rmdir" ;rmdir ${i}; elif [[ -f ${i} ]]; then echo "rm" ;rm -f ${i}; fi; done
+# 清理历史备份，过滤隐藏文件
+for i in $(find ${DUMP_DIRECTORY}/ -m${BACKUP_KEEP_TYPE} +${BACKUP_KEEP_DAY} | grep -Ev "/\."); do if [[ -d ${i} ]]; then echo "rmdir == ${i}" ;rmdir ${i}; elif [[ -f ${i} ]]; then echo "rm == ${i}" ;rm -f ${i}; fi; done
 res1=$?
 # 执行备份命令
 echo "Dump doing..."
 docker run --rm -e MYSQL_ROOT_PASSWORD=123456 -v ${DUMP_DIRECTORY}/${DUMP_DAY}/:/tmp/mysql/ -v ${DUMP_SHELL}:/tmp/dump.sh --network=${NETWORK_NAME} --name dump_mysql ${IMAGE_NAME}  ./tmp/dump.sh 2>/dev/null
 res2=$?
-# # 清理空目录
-# find ${DUMP_DIRECTORY}/ -type d -size 6c -exec rmdir {} \;
+
 if [ ${res1} == 0 -a ${res2} == 0 ];then
   echo 
   cd ${DUMP_DIRECTORY}
   set -x
-  tar -zcf ${DUMP_DAY}.tar.gz ${DUMP_DAY} --remove-files
+  tar -zcf $(hostname -I | awk '{print $1}')_${DUMP_DAY}.tar.gz ${DUMP_DAY} --remove-files
   set +x
   echo "Done."
 fi

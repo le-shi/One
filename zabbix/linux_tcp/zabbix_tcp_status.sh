@@ -3,6 +3,8 @@
 #tcp status
 metric=$1
 tmp_file=/tmp/tcp_status.txt
+touch ${tmp_file}
+chmod 666 ${tmp_file}
 /usr/sbin/ss -ant | sed 1d | awk '{++S[$1]}END{for(a in S) print a,S[a]}' > $tmp_file
 
 case $metric in

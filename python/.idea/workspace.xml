@@ -2,11 +2,47 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b34cc039-6426-4810-adfe-e76d0a5edab0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../blogs/Nginx根据不同的域名设置不同的网站根目录.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/prometheus/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker/prometheus/docker-compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/prometheus/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../docker/prometheus/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/prometheus/volume/alertmanager/config/alertmanager.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker/prometheus/volume/alertmanager/config/alertmanager.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker/prometheus/volume/prometheus/config/targets.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker/prometheus/volume/prometheus/config/targets.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/backupConfig.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/backupConfig.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/binlog_dump.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/binlog_dump.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/check_keep_server.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/check_keep_server.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/check_system_version.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/check_system_version.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/chownDocker.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/chownDocker.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/clean_cotainers.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/clean_cotainers.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/clone_multi_tomcat.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/clone_multi_tomcat.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/expr_pv.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/expr_pv.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_apache.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_apache.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_bash.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_bash.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_codis.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_codis.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_docker.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_docker.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_go.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_go.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_hubot.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_hubot.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_jenkins.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_jenkins.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_logstash.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_logstash.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_lolcat.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_lolcat.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_modsecurity.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_modsecurity.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_nginx.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_nginx.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_nginx_modsecurity2.9.2.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_nginx_modsecurity2.9.2.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_nginx_modsecurity3.0.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_nginx_modsecurity3.0.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_node-exporter.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_node-exporter.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_python.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_python.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/install_supervisor.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/install_supervisor.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/lshi-env.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/lshi-env.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/o...area.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/o...area.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/passwd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/selete_latest_stable.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/selete_latest_stable.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/shortgit.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/shortgit.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/superbench.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/superbench.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/system_optimize.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/system_optimize.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/upgrade_kernel_centos7.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/upgrade_kernel_centos7.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/upgrade_openssh.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/upgrade_openssh.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../bash/yc-ssh-key-copy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../bash/yc-ssh-key-copy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blogs/使用lvm磁盘管理.md" beforeDir="false" afterPath="$PROJECT_DIR$/../blogs/使用lvm磁盘管理.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blogs/基于apache2.2编译相关安全模块.md" beforeDir="false" afterPath="$PROJECT_DIR$/../blogs/基于apache2.2编译相关安全模块.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../blogs/如何查找注册到Eureka实例的真实主机.md" beforeDir="false" afterPath="$PROJECT_DIR$/../blogs/如何查找注册到Eureka实例的真实主机.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docker/prometheus/volume/prometheus/config/prometheus.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker/prometheus/volume/prometheus/config/prometheus.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docker/prometheus/volume/prometheus/config/rules/host_and_hardware-rules.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker/prometheus/volume/prometheus/config/rules/host_and_hardware-rules.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docker/prometheus/volume/prometheus/config/rules/prometheus_self-rules.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker/prometheus/volume/prometheus/config/rules/prometheus_self-rules.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +73,7 @@
       <option name="presentableId" value="Default" />
       <updated>1631516223071</updated>
       <workItem from="1631516224389" duration="1570000" />
+      <workItem from="1635386504497" duration="20000" />
     </task>
     <servers />
   </component>

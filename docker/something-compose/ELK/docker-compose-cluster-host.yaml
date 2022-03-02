@@ -1,0 +1,105 @@
+# hostA
+---
+version: '3'
+
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=<hostB>,<hostC>
+      - cluster.initial_master_nodes=<hostA>,<hostB>,<hostC>
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    healthcheck:
+      test: "curl -sL http://localhost:9200 > /dev/null"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    network_mode: host
+
+volumes:
+  data01:
+    driver: local
+
+# hostB
+---
+version: '3'
+
+services:
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=<hostA>,<hostC>
+      - cluster.initial_master_nodes=<hostA>,<hostB>,<hostC>
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+    healthcheck:
+      test: "curl -sL http://localhost:9200 > /dev/null"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    network_mode: host
+
+volumes:
+  data02:
+    driver: local
+
+# hostC
+---
+version: '3'
+
+services:
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=<hostA>,<hostB>
+      - cluster.initial_master_nodes=<hostA>,<hostB>,<hostC>
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data03:/usr/share/elasticsearch/data
+    healthcheck:
+      test: "curl -sL http://localhost:9200 > /dev/null"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    network_mode: host
+
+
+volumes:
+  data03:
+    driver: local

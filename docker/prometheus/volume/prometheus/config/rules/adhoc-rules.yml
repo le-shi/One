@@ -1,0 +1,32 @@
+# https://awesome-prometheus-alerts.grep.to/rules
+groups:
+# custom-rules
+- name: 自定义规则
+  rules:
+  # SSH登录 和 长时间登录服务器 二选其一作为告警规则，不然会太吵
+  # - alert: SSH登录
+  #   expr: ssh_logind > 0
+  #   for: 10m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "有人登录SSH (instance {{ $labels.instance }})"
+  #     description: "当前登录总人数: {{ $value }}"
+
+  - alert: 长时间登录服务器
+    expr: (ssh_login_info and ON(instance) sum by(instance)(ssh_logind > 0))
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: "有人长时间登录 instance {{ $labels.instance }}"
+      description: "登录IP: {{ $labels.client_ip }}\n\t登录用户: {{ $labels.login_user }}\n\t进程号: {{ $labels.pid }}\n\t运行的进程: {{ $labels.what_doing }}"
+
+  - alert: 校验DNS解析
+    expr: rate(verify_dns[5m]) > 0.5
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "域名不能正常解析 (instance {{ $labels.instance }})"
+      description: "DNS解析域名失败\n  VALUE = {{ $value }}"

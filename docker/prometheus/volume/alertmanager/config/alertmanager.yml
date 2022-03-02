@@ -75,7 +75,7 @@ receivers:
 # 注意: 使用equal时，要避免使用标签的值包含中文的
 # 抑制(禁止)规则的列表
 inhibit_rules:
-  # 源标签警报触发时抑制含有目标标签的警报，在当前警报匹配 severity="critical" 时，禁止发送 severity="warning" 级别的警告
+  # 源标签警报触发时抑制含有目标标签的警报，在当前警报匹配 severity="critical" 时，禁止发送 severity="warning" 级别的警告(一个相同的告警项，当同时出现警告和严重级别的警报时，只发送严重的警报)
   - source_matchers: [ severity="critical" ]
     target_matchers: [ severity="warning" ]
     # 确保配置的标签的值内容相同才会抑制，也就是说不同级别的警报中这些标签的值必须相同才会被抑制

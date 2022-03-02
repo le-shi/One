@@ -14,7 +14,7 @@ groups:
 
   - alert: 监控目标失联
     expr: up == 0
-    for: 0m
+    for: 2m
     labels:
       severity: critical
     annotations:
@@ -139,14 +139,14 @@ groups:
       description: "Prometheus has no target in service discovery\n  VALUE = {{ $value }}"
 
   # Prometheus目标Scraping(刮的？收集的？)很慢
-  - alert: PrometheusTargetScrapingSlow
-    expr: prometheus_target_interval_length_seconds{quantile="0.9"} > 180
-    for: 5m
-    labels:
-      severity: warning
-    annotations:
-      summary: "Prometheus target scraping slow (instance {{ $labels.instance }})"
-      description: "Prometheus is scraping exporters slowly\n  VALUE = {{ $value }}"
+  # - alert: 普罗米修斯目标抓取频率缓慢
+  #   expr: prometheus_target_interval_length_seconds{quantile="0.9"} > 500
+  #   for: 5m
+  #   labels:
+  #     severity: warning
+  #   annotations:
+  #     summary: "普罗米修斯目标抓取频率缓慢 (instance {{ $labels.instance }})"
+  #     description: "普罗米修斯正在缓慢地频率抓取目标出口商\n  VALUE = {{ printf \"%.0f\" $value }}s"
 
   - alert: PrometheusLargeScrape
     expr: increase(prometheus_target_scrapes_exceeded_sample_limit_total[10m]) > 10

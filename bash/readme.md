@@ -20,6 +20,7 @@ $_ 传递参数和全路径
 ```bash
 !! 上条命令
 !$ 上条命令的最后一个参数
+~ 表示家目录，它不是一个变量，一般是直接使用: cd ~; echo ~
 ```
 
 + 分组三
@@ -167,4 +168,68 @@ exec 2>&- 关闭 标准错误输出。
 标准输入重定向（STDIN，文件描述符为0）：默认从键盘输入，也可从其他文件或命令中输入。
 标准输出重定向（STDOUT，文件描述符为1）：默认输出到屏幕。
 标准错误输出重定向（STDERR，文件描述符为2）：默认输出到屏幕。
+```
+
++ 分组九
+
+```bash
+# shell脚本中的set指令
+set -xue
+set -o pipefail
+
+-a 标示已修改的变量，以供输出至环境变量。
+-b 使被中止的后台程序立刻回报执行状态。
+-C 转向所产生的文件无法覆盖已存在的文件。
+-d Shell预设会用杂凑表记忆使用过的指令，以加速指令的执行。使用-d参数可取消。
+-e 若指令传回值不等于0，则立即退出shell。
+-f 取消使用通配符。
+-h 自动记录函数的所在位置。
+-H Shell 可利用"!"加<指令编号>的方式来执行history中记录的指令。
+-k 指令所给的参数都会被视为此指令的环境变量。
+-l 记录for循环的变量名称。
+-m 使用监视模式。
+-n 只读取指令，而不实际执行。
+-p 启动优先顺序模式。
+-P 启动-P参数后，执行指令时，会以实际的文件或目录来取代符号连接。
+-t 执行完随后的指令，即退出shell。
+-u 当执行时使用到未定义过的变量，则显示错误信息。
+-v 显示shell所读取的输入值。
+-x 执行指令后，会先显示该指令及所下的参数。
++<参数> 取消某个set曾启动的参数。和 -<参数> 作用相反
+-o option 特殊属性有很多，大部分与上面的可选参数功能相同
+
+# 其他用法 - 初始化位置参数，脚本中加入以下内容，在执行脚本时并没有输入参数，但是使用 set 指令后会对位置参数进行赋值。
+# 用于命令行 | 脚本中
+set one two three
+echo $3 $2 $1
+# 其他用法 - 显示shell变量，如果不带任何参数的使用 set 命令，set 指令就会显示一列已设置的 shell 变量，包括用户定义的变量和关键字变量。
+# 用于命令行 | 脚本中
+set
+```
+
++ 分组十
+
+```bash
+# 循环/遍历
+## while 循环是 Shell 脚本中最简单的一种循环，当条件满足时，while 重复地执行一组语句，当条件不满足时，就退出 while 循环
+while condition; do statements; done
+## unti 循环和 while 循环恰好相反，当判断条件不成立时才进行循环，一旦判断条件成立，就终止循环
+until condition; do statements; done
+## 除了 while 循环和 until 循环，Shell 脚本还提供了 for 循环，它更加灵活易用，更加简洁明了
+## - Python语言风格
+for variable in value_list; do statements; done
+## - C语言风格
+for ((exp1; exp2; exp3)); do statements; done
+## select in 循环用来增强交互性，它可以显示出带编号的菜单，用户输入不同的编号就可以选择不同的菜单，并执行不同的功能.select in 是 Shell 独有的一种循环，非常适合终端（Terminal）这样的交互场景，C语言、C++、Java、Python、C# 等其它编程语言中是没有的
+select variable in value_list; do statements; done
+# 判断
+if [[ condition ]]; then statements; else statements; fi
+if [[ condition ]]; then statements; fi
+case expression in; pattern1) statement1;; pattern2) statement2 ;; pattern3) statement3  ;; *)  statementn;; esac
+```
+
++ 分组X
+
+```bash
+# Something...
 ```
